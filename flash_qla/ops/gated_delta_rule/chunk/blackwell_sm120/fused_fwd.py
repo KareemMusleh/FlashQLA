@@ -42,7 +42,7 @@ def tilelang_fused_chunk_gdr_fwd(
     is_varlen,
     is_cp,
     state_v_first,
-    block_DV=128,
+    block_DV=64,
 ):
     batch_size = T.dynamic("batch_size")
     num_tokens = T.dynamic("num_tokens")
@@ -730,8 +730,8 @@ def fused_gdr_fwd(
     # avoiding a redundant full-output memset on every forward pass.
     o = torch.empty_like(v)
 
-
-    block_DV = 128
+    
+    block_DV = 64
     
     tilelang_fused_chunk_gdr_fwd_kernel = tilelang_fused_chunk_gdr_fwd(
         H,

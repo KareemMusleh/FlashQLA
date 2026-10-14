@@ -634,3 +634,71 @@ def correct_terminal_states(
         )
 
     return cp_dht
+
+
+# ---------------------------------------------------------------------------
+# card-level (h, M) aggregation for inter+intra CP
+# ---------------------------------------------------------------------------
+def aggregate_card_state(
+    ht_buffer: torch.Tensor,   # [cp_batch_size, H, K, V] (or [.., V, K])
+    mt_buffer: torch.Tensor,   # [cp_batch_size, H, K, K]
+    fallback_mask: torch.Tensor,  # [cp_batch_size, H]
+    seq_map_r2c: torch.Tensor,  # [raw_batch_size + 1]
+    raw_h0: torch.Tensor | None = None,  # [raw_batch_size, H, K, V] (or [.., V, K])
+    state_v_first: bool = False,
+    reverse: bool = False,
+    transpose_m: bool = False,
+    compute_m: bool = True,
+):
+    raw_batch_size = seq_map_r2c.shape[0] - 1
+    _, num_heads, dim_2, dim_3 = ht_buffer.shape
+    if state_v_first:
+        v_head_dim, k_head_dim = dim_2, dim_3
+    else:
+        k_head_dim, v_head_dim = dim_2, dim_3
+    assert k_head_dim == v_head_dim == 128
+
+    res_dtype = ht_buffer.dtype
+    use_raw_h0 = raw_h0 is not None
+    if use_raw_h0:
+        raw_h0 = raw_h0.to(res_dtype)
+
+    state_kernel = tilelang_correct_h0(
+        H=num_heads,
+        DK=k_head_dim,
+        DV=v_head_dim,
+        res_dtype=res_dtype,
+        accum_dtype="float32",
+        h_buffer_dtype=ht_buffer.dtype,
+        m_buffer_dtype=mt_buffer.dtype,
+        seqlen_dtype=seq_map_r2c.dtype,
+        mask_dtype=fallback_mask.dtype,
+        use_raw_h0=use_raw_h0,
+        state_v_first=state_v_first,
+        reverse=reverse,
+        transpose_m=transpose_m,
+        store_intra_h0=False,
+        store_inter_h=True,
+        compute_m=compute_m,
+    )
+    
+    raw_state_shape = (
+        (raw_batch_size, num_heads, v_head_dim, k_head_dim)
+        if state_v_first
+        else (raw_batch_size, num_heads, k_head_dim, v_head_dim)
+    )
+    
+    h_card = torch.empty(raw_state_shape, dtype=res_dtype, device=ht_buffer.device)
+    if not use_raw_h0:
+        raw_h0 = torch.empty(raw_state_shape, dtype=res_dtype, device=ht_buffer.device)
+    if compute_m:
+        m_card = torch.empty(
+            (raw_batch_size, num_heads, k_head_dim, k_head_dim),
+            dtype=res_dtype,
+            device=mt_buffer.device,
+        )
+        state_kernel(raw_h0, ht_buffer, mt_buffer, fallback_mask, seq_map_r2c, h_card, m_card)
+        return h_card, m_card
+
+    state_kernel(raw_h0, ht_buffer, mt_buffer, fallback_mask, seq_map_r2c, h_card)
+    return h_card, None
