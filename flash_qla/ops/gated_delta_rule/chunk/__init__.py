@@ -23,7 +23,7 @@ elif tilelang.contrib.nvcc.get_target_compute_version() in ["10.0", "10.3"]:
     CHUNK_SIZE = 64
 elif tilelang.contrib.nvcc.get_target_compute_version() in ["12.0", "12.1"]:
     from .blackwell_sm120 import fused_gdr_fwd, fused_gdr_bwd, fused_gdr_h, kkt_solve
-    from .blackwell_sm120 import get_warmup_chunks, get_warmup_chunks_bidi, correct_initial_states, correct_terminal_states
+    from .blackwell_sm120 import get_warmup_chunks, get_warmup_chunks_bidi, correct_initial_states, correct_terminal_states, aggregate_card_state
     from .blackwell_sm120.cp_bwd import fused_gdr_dh_ws as fused_gdr_dh
     CHUNK_SIZE = 32
 else:
