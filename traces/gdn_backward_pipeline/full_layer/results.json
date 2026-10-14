@@ -1,0 +1,112 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "visible_devices": "6",
+  "hidden_size": 2560,
+  "key_heads": 16,
+  "value_heads": 48,
+  "head_dim": 128,
+  "dt": 0.001,
+  "partitions": 8,
+  "reference_source_sha256": {
+    "driver": "76a00f8660bb38605839f015be533604b84b8300adadebbf7597ed98e3cc4fa3",
+    "math": "9c2cca70a25a94b9d3a76f49cb96e4a07dbe7125aa7b3fbd477ac4ec0f045262",
+    "main": "3a2466ec325a3e2e0eea0bbfec2dc6f6cf7406c1e1830f9688c86885924ac343"
+  },
+  "scope": "Full layer forward/backward including all projections, Dao causal-conv1d/SiLU, decay/beta preparation, GDN with Q/K normalization, RMSNorm/output SiLU gate and output projection. Input and parameter gradients. Loss and optimizer excluded. Same standard forward, caches, partitions, precision; GDN backward postprocessing is the only variant.",
+  "16384": {
+    "gradient_rms": {
+      "input": 2.9209276351025316e-05,
+      "norm": 0.0,
+      "A_log": 0.0,
+      "dt_bias": 0.0,
+      "q.weight": 3.408564978127894e-05,
+      "k.weight": 3.722943617968506e-05,
+      "v.weight": 0.0,
+      "z.weight": 0.0,
+      "a.weight": 0.0,
+      "b.weight": 0.0,
+      "out.weight": 0.0,
+      "conv.0": 5.146729789341722e-06,
+      "conv.1": 0.000134924510917578,
+      "conv.2": 1.7314761843754614e-06
+    },
+    "forward_backward": {
+      "flashqla_committed": {
+        "median_ms": 14.906214904785156,
+        "samples_ms": [
+          14.718585205078124,
+          14.679557800292969,
+          15.408518981933593,
+          15.16654052734375,
+          14.61976318359375,
+          15.039520263671875,
+          14.844607543945312,
+          14.906214904785156,
+          14.927340698242187
+        ]
+      },
+      "optimized_postprocessing": {
+        "median_ms": 14.495896911621093,
+        "samples_ms": [
+          14.412640380859376,
+          14.32001953125,
+          14.780960083007812,
+          14.963340759277344,
+          15.158438110351563,
+          14.611570739746094,
+          14.3857666015625,
+          14.495896911621093,
+          14.368634033203126
+        ]
+      }
+    }
+  },
+  "131072": {
+    "gradient_rms": {
+      "input": 3.59074741215304e-05,
+      "norm": 0.0,
+      "A_log": 0.0,
+      "dt_bias": 0.0,
+      "q.weight": 5.800147911514166e-05,
+      "k.weight": 8.803609707334452e-05,
+      "v.weight": 0.0,
+      "z.weight": 0.0,
+      "a.weight": 0.0,
+      "b.weight": 0.0,
+      "out.weight": 0.0,
+      "conv.0": 2.7831355794272266e-06,
+      "conv.1": 1.0860702187635883e-05,
+      "conv.2": 9.62719566411573e-06
+    },
+    "forward_backward": {
+      "flashqla_committed": {
+        "median_ms": 120.82174682617188,
+        "samples_ms": [
+          121.31043243408203,
+          117.7260971069336,
+          121.15817260742188,
+          120.4481430053711,
+          120.93707275390625,
+          119.81489562988281,
+          121.63591766357422,
+          120.1756820678711,
+          120.82174682617188
+        ]
+      },
+      "optimized_postprocessing": {
+        "median_ms": 118.68637084960938,
+        "samples_ms": [
+          117.08500671386719,
+          120.02230072021484,
+          117.9228286743164,
+          117.52012634277344,
+          119.14886474609375,
+          119.09366607666016,
+          118.68637084960938,
+          118.55921936035156,
+          119.575439453125
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+PROJECTIONS 16384
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+forward {'separate': 2.0096, 'combined_backward': 2.009, 'combined_dx': 2.009, 'packed_parameter': 1.9005}
+backward {'separate': 4.5075, 'combined_backward': 4.2599, 'combined_dx': 4.3166, 'packed_parameter': 4.1914}
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:310.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+forward_backward {'separate': 6.4937, 'combined_backward': 6.4181, 'combined_dx': 6.526, 'packed_parameter': 6.2544}
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:28 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+COMPLETE LAYER 16384
+forward {'separate': 4.4423, 'combined_backward': 4.4523, 'combined_dx': 4.4382, 'packed_parameter': 4.5229}
+backward {'separate': 9.9208, 'combined_backward': 9.7854, 'combined_dx': 9.9198, 'packed_parameter': 9.7249}
+forward_backward {'separate': 14.7457, 'combined_backward': 14.2642, 'combined_dx': 14.4796, 'packed_parameter': 14.4673}
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:57:44 3505010:3505010 SyncActivityProfilerHandler.cpp:59] profiler_stop

@@ -1,0 +1,27 @@
+{
+  "gpu_tests_passed": 9,
+  "memcheck_tests_passed": 9,
+  "memcheck_errors": 0,
+  "full_layer_gradient_checks_passed_seqlens": [
+    16384,
+    131072
+  ],
+  "pending": [],
+  "blocker": null,
+  "cuda_initialization": "Recovered; earlier initialization-failure logs retained",
+  "original_main_racecheck_hazards": 0,
+  "original_main_128k_variation_cause": "Unresolved; subsequent 12-repeat real and synthetic probes were bitwise stable",
+  "source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/training_norm_gate.py": "b56903e7ae105bf00aa095babc9675b5051cfa46fbf652c3d86c0a07c5a635b4",
+    "tests/test_training_norm_gate.py": "a7dc25d92a7d665c5ab4f1f23b5cb881b7b74444aa3aebcd79acb00f20c7d705",
+    "profile/bench_gdn_full_layer_training.py": "b59be05e7140d36a1b0aa5d74c865c3d413f17ee26852d84e39c04ebf5b526d5",
+    "profile/bench_training_norm_gate.py": "7f538455fcb7c3b47e5f8992ef1592af3ac782aa42a4c2b4ed8ccc4292ba4b67"
+  },
+  "independent_full_layer_repeat": "traces/gdn_backward_pipeline/full_layer_fused_gate_repeat/results.json",
+  "independent_full_layer_output_checks_passed_seqlens": [
+    16384,
+    131072
+  ],
+  "syntax_checks_passed": true,
+  "git_diff_check_passed": true
+}

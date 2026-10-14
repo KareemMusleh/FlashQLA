@@ -1,0 +1,75 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "shape": [
+    1,
+    131072,
+    16,
+    48,
+    128
+  ],
+  "scope": "forward; normalized Q/K; full history; no initial/final state",
+  "comparison_decay_threshold": null,
+  "optional_truncated_decay_threshold": null,
+  "timing": "9 rotating-order samples, 30 graph replays with 1 forwards per graph",
+  "partitions": {
+    "8": {
+      "correctness": {
+        "flashqla_full": {
+          "relative_rms": 0.00017868849681690335,
+          "finite": true
+        },
+        "optimized": {
+          "relative_rms": 0.004755307920277119,
+          "finite": true
+        },
+        "flashinfer": {
+          "relative_rms": 0.0027187159284949303,
+          "finite": true
+        }
+      },
+      "flashqla_full": {
+        "median_ms": 7.33770751953125,
+        "samples_ms": [
+          7.261331176757812,
+          7.585499572753906,
+          7.467461140950521,
+          7.320173645019532,
+          7.365395100911458,
+          7.309876505533854,
+          7.33770751953125,
+          7.403033447265625,
+          7.334933471679688
+        ]
+      },
+      "optimized": {
+        "median_ms": 4.383331298828125,
+        "samples_ms": [
+          4.153919982910156,
+          4.33414306640625,
+          4.308737182617188,
+          4.44425303141276,
+          4.5894114176432295,
+          4.383331298828125,
+          4.420824686686198,
+          4.520189921061198,
+          4.305817667643229
+        ]
+      },
+      "flashinfer": {
+        "median_ms": 4.598530069986979,
+        "samples_ms": [
+          4.518928019205729,
+          5.0413258870442705,
+          4.631106058756511,
+          4.5674687703450525,
+          4.654863993326823,
+          4.566286722819011,
+          4.598530069986979,
+          4.685316467285157,
+          4.516388448079427
+        ]
+      }
+    }
+  },
+  "validity": "Superseded: GPU 3 became shared during final measurements; use gdn_next_clean results on idle GPU 0."
+}

@@ -1,0 +1,187 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "causal_conv1d": "1.7.0",
+  "visible_devices": "0",
+  "scope": "Synthetic full YDT layer, single unpadded sequence, hidden2560 Hk16 Hv48 D128 conv4; BF16/FP32 gates; full-history optimized forward and default uncached GDR backward; dt_max=.01 fixture; no optimizer, distributed CP, state cache, or activation-stat logging.",
+  "method": "21 paired CUDA graph samples, alternating execution order, external per-variant events",
+  "memory_method": "Native allocator alloc/free_requested event history (requested bytes) for eager forward/backward; resident input/parameters/reference gradients excluded; event delta checked against live allocation counters allowing <64KiB allocator rounding; no dispatch mode",
+  "sources": {
+    "profile/bench_direct_gdn_training.py": "39871a50ceda221fe8484270f25edef2aa491a6764982d238ef73672f9c4b1f5",
+    "flash_qla/ops/gdn_layer.py": "709b0ca162711476fc410e509e3cf0ceb1d1c8d347b550650fce4aa2d73b76d3",
+    "profile/bench_gdn_projection_training.py": "3586aa587b3f7ac11060feadd712d101a377b4fb985f3153de4fa701c1b006eb",
+    "flash_qla/ops/gated_delta_rule/chunk/__init__.py": "8ddb253114b8484309e2640d7cf6ab4ab878a383b7e1ad2a28bfc4078eff7c44"
+  },
+  "16384": {
+    "checks": {
+      "separate": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.0227905748319032e-06,
+          2.261602122077887e-05,
+          4.410656496411452e-06,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 2583738368,
+        "whole_step_peak_increment_bytes": 2425356928,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 38,
+          "unique_activation_storage_bytes": 1779433856
+        }
+      },
+      "packed": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.0038822663234368703,
+          0.000385543004723068,
+          0.002255789658726764,
+          0.0005359333232787951,
+          5.580457653918496e-05,
+          0.0006339485861700226,
+          0.0015176306119411105,
+          0.0004443324481210158,
+          0.0019579177843951495,
+          0.00041179621844439595,
+          0.00011221774264923307,
+          0.00011259960307774682,
+          0.0024212539210877195,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 3066083328,
+        "whole_step_peak_increment_bytes": 2760900864,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 1370488832
+        }
+      },
+      "direct": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.0038822663234368703,
+          0.000385543004723068,
+          0.002255789658726764,
+          0.0005359333232787951,
+          5.580457653918496e-05,
+          0.0006339485861700226,
+          0.0015176306119411105,
+          0.00044433244878780285,
+          0.0019579177508628805,
+          0.0004136331974120988,
+          0.00011221774264923307,
+          0.00011259960307774682,
+          0.0024212539210877195,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 3066083328,
+        "whole_step_peak_increment_bytes": 2760900864,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 1370488832
+        }
+      }
+    },
+    "timings": {}
+  },
+  "131072": {
+    "checks": {
+      "separate": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          7.0675844866056e-05,
+          0.00013312279676181357,
+          5.1677413315868076e-05,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 18415737344,
+        "whole_step_peak_increment_bytes": 18918408832,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 38,
+          "unique_activation_storage_bytes": 14235468160
+        }
+      },
+      "packed": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.003899464905556098,
+          0.00047504591103221863,
+          0.0023719193222202528,
+          0.0009050454491482586,
+          9.68996626493214e-05,
+          0.0010091033770823644,
+          0.0017654922583886002,
+          0.00037570358542856984,
+          0.0020890262964951335,
+          0.0007889525384197208,
+          0.00023378368675964307,
+          0.0002345056186386045,
+          0.002817438134508257,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 22266108416,
+        "whole_step_peak_increment_bytes": 21602763008,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 10963910656
+        }
+      },
+      "direct": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.003899464905556098,
+          0.00047504591103221863,
+          0.0023719193222202528,
+          0.0009050454491482586,
+          9.68996626493214e-05,
+          0.0010091033770823644,
+          0.0017654922583886002,
+          0.0003673265964887373,
+          0.0020890265528977522,
+          0.000788949304512315,
+          0.00023378368675964307,
+          0.0002345056186386045,
+          0.002817438134508257,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 22266108416,
+        "whole_step_peak_increment_bytes": 21602763008,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 10963910656
+        }
+      }
+    },
+    "timings": {}
+  }
+}

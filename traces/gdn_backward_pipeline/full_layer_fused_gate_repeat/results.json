@@ -1,0 +1,119 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "visible_devices": "0",
+  "hidden_size": 2560,
+  "key_heads": 16,
+  "value_heads": 48,
+  "head_dim": 128,
+  "dt": 0.001,
+  "partitions": 8,
+  "reference_source_sha256": {
+    "driver": "76a00f8660bb38605839f015be533604b84b8300adadebbf7597ed98e3cc4fa3",
+    "math": "9c2cca70a25a94b9d3a76f49cb96e4a07dbe7125aa7b3fbd477ac4ec0f045262",
+    "main": "3a2466ec325a3e2e0eea0bbfec2dc6f6cf7406c1e1830f9688c86885924ac343"
+  },
+  "compare_norm_gate": true,
+  "source_sha256": {
+    "profile/bench_gdn_full_layer_training.py": "b59be05e7140d36a1b0aa5d74c865c3d413f17ee26852d84e39c04ebf5b526d5",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/training_norm_gate.py": "b56903e7ae105bf00aa095babc9675b5051cfa46fbf652c3d86c0a07c5a635b4"
+  },
+  "scope": "Full layer forward/backward including projections and parameter/input gradients. Both variants use current GDN backward and identical standard GDN forward/cache/partitions. Only output RMSNorm/SiLU gate implementation differs; both retain normalized output, SiLU output and FP32 statistics. BF16 intermediate rounding is preserved. Loss and optimizer excluded.",
+  "16384": {
+    "output_relative_rms": 4.991532614368801e-05,
+    "gradient_rms": {
+      "input": 0.003023647613216096,
+      "norm": 0.0027596887630262222,
+      "A_log": 0.00035302629577556966,
+      "dt_bias": 0.00035302293282625307,
+      "q.weight": 0.00041216205215128995,
+      "k.weight": 0.003371329302217382,
+      "v.weight": 0.0010979851972682845,
+      "z.weight": 7.176409287196703e-05,
+      "a.weight": 0.0019322398329525642,
+      "b.weight": 0.002685269098018089,
+      "out.weight": 6.857121123940728e-05,
+      "conv.0": 0.0004042013344047774,
+      "conv.1": 0.002954036449276165,
+      "conv.2": 0.0009039169552485512
+    },
+    "forward_backward": {
+      "torch_norm_gate": {
+        "median_ms": 14.631558227539063,
+        "samples_ms": [
+          14.631558227539063,
+          14.493458557128907,
+          15.030073547363282,
+          15.018016052246093,
+          14.925254821777344,
+          14.68462677001953,
+          14.57008056640625,
+          14.334617614746094,
+          14.433158874511719
+        ]
+      },
+      "fused_norm_gate": {
+        "median_ms": 13.324339294433594,
+        "samples_ms": [
+          13.300262451171875,
+          13.18323211669922,
+          13.154208374023437,
+          13.79842529296875,
+          14.194956970214843,
+          13.861318969726563,
+          13.324339294433594,
+          13.2359619140625,
+          13.429049682617187
+        ]
+      }
+    }
+  },
+  "131072": {
+    "output_relative_rms": 4.2180117363806986e-05,
+    "gradient_rms": {
+      "input": 0.0038705230906023323,
+      "norm": 0.002783266560982794,
+      "A_log": 0.000871653939269339,
+      "dt_bias": 0.000871648035880299,
+      "q.weight": 0.00048049163511313466,
+      "k.weight": 0.004282742758774444,
+      "v.weight": 0.0026309616334136,
+      "z.weight": 0.00010605689515311201,
+      "a.weight": 0.0027080733474676975,
+      "b.weight": 0.003820518222270606,
+      "out.weight": 0.00010384025746108573,
+      "conv.0": 0.00036617162054664823,
+      "conv.1": 0.0037099026908846643,
+      "conv.2": 0.002252910925034208
+    },
+    "forward_backward": {
+      "torch_norm_gate": {
+        "median_ms": 119.1843032836914,
+        "samples_ms": [
+          119.4803237915039,
+          119.01416015625,
+          119.1843032836914,
+          118.86145782470703,
+          119.55705261230469,
+          120.30579376220703,
+          117.8216781616211,
+          117.36077117919922,
+          121.65773010253906
+        ]
+      },
+      "fused_norm_gate": {
+        "median_ms": 108.32169342041016,
+        "samples_ms": [
+          106.90042877197266,
+          110.42906951904297,
+          106.86817932128906,
+          110.61444854736328,
+          105.60206604003906,
+          108.32169342041016,
+          110.05068969726562,
+          108.80006408691406,
+          106.24244689941406
+        ]
+      }
+    }
+  }
+}

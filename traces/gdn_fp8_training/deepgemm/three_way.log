@@ -1,0 +1,19 @@
+SEQLEN 16384
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+full_layer {'bf16': 13.341574096679688, 'fp8': 12.610489654541016, 'rowwise': 12.587110137939453} output_rms 0.08629475099850309 max_gradient_rms 0.09707460374730124
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:32:00 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop
+SEQLEN 131072
+full_layer {'bf16': 109.31768035888672, 'fp8': 102.1485595703125, 'rowwise': 102.6280517578125} output_rms 0.08667009595843006 max_gradient_rms 0.0968354467856417
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+[W1013 13:32:23.684855841 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 669515776, total: 85017886720).
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:32:23 467418:467418 SyncActivityProfilerHandler.cpp:59] profiler_stop

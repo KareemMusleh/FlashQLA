@@ -1,0 +1,133 @@
+{
+  "scope": "Fused GDN backward kernel only, excluding state reconstruction and postprocessing",
+  "gpu": "H100 SXM 80GB",
+  "hardware_source": "https://www.nvidia.com/en-us/data-center/h100/",
+  "peak_dense_bf16_tflops": 989.5,
+  "peak_hbm_tb_per_s": 3.35,
+  "gemms_per_head_chunk": 19,
+  "flops_per_head_chunk": 26214400,
+  "assumptions": [
+    "BF16 GEMMs with FP32 accumulation, 2 FLOPs per multiply-add",
+    "Dense executed GEMMs counted including triangular masked work",
+    "Traffic includes expanded 48-head dQ/dK outputs, BF16 saved states and inverse, FP32 gates and boundary gradients",
+    "Optimistic HBM traffic assumes perfect sharing of Q/K reads across three value heads",
+    "No scalar instruction, shared-memory, synchronization, cache-conflict or clock effects in ideal bound",
+    "Hardware counters unavailable: ERR_NVGPUCTRPERM; no measured DRAM bytes or tensor utilization"
+  ],
+  "16384": {
+    "measured_ms": 1.0516656666666666,
+    "gemm_flops": 322122547200,
+    "achieved_tflops": 306.29748351583225,
+    "fraction_dense_compute_peak": 0.3095477347305025,
+    "logical_bytes_without_qk_reuse": 1962934272,
+    "optimistic_hbm_bytes": 1694498816,
+    "compute_floor_ms": 0.3255407248105104,
+    "hbm_floor_ms": 0.5058205420895522,
+    "roofline_floor_ms": 0.5058205420895522,
+    "optimistic_speedup_bound": 2.0791280289294303,
+    "partition_chunks": [
+      47,
+      47,
+      47,
+      47,
+      47,
+      21
+    ],
+    "launch": {
+      "External id": 2562,
+      "queued": 0,
+      "device": 0,
+      "context": 1,
+      "stream": 13,
+      "correlation": 6465,
+      "registers per thread": 128,
+      "shared memory": 232448,
+      "blocks per SM": 2.181818,
+      "warps per SM": 34.909092,
+      "grid": [
+        288,
+        1,
+        1
+      ],
+      "block": [
+        512,
+        1,
+        1
+      ],
+      "est. achieved occupancy %": 0,
+      "occupancy": {
+        "activeBlocksPerMultiprocessor": 0,
+        "limitingFactors": "SMEM",
+        "blockLimitRegs": 1,
+        "blockLimitSharedMem": 0,
+        "blockLimitWarps": 4,
+        "blockLimitBlocks": 32,
+        "blockLimitBarriers": 2147483647,
+        "allocatedRegistersPerBlock": 65536,
+        "allocatedSharedMemPerBlock": 233472
+      },
+      "graph id": 0,
+      "graph node id": 0,
+      "channel": 1,
+      "channel_type": 1
+    }
+  },
+  "131072": {
+    "measured_ms": 8.136557666666667,
+    "gemm_flops": 2576980377600,
+    "achieved_tflops": 316.71629246323783,
+    "fraction_dense_compute_peak": 0.3200771020346011,
+    "logical_bytes_without_qk_reuse": 15439233024,
+    "optimistic_hbm_bytes": 13291749376,
+    "compute_floor_ms": 2.604325798484083,
+    "hbm_floor_ms": 3.9676863808955223,
+    "roofline_floor_ms": 3.9676863808955223,
+    "optimistic_speedup_bound": 2.0507058485883185,
+    "partition_chunks": [
+      373,
+      373,
+      373,
+      373,
+      373,
+      183
+    ],
+    "launch": {
+      "External id": 5634,
+      "queued": 0,
+      "device": 0,
+      "context": 1,
+      "stream": 13,
+      "correlation": 29554,
+      "registers per thread": 128,
+      "shared memory": 232448,
+      "blocks per SM": 2.181818,
+      "warps per SM": 34.909092,
+      "grid": [
+        288,
+        1,
+        1
+      ],
+      "block": [
+        512,
+        1,
+        1
+      ],
+      "est. achieved occupancy %": 0,
+      "occupancy": {
+        "activeBlocksPerMultiprocessor": 0,
+        "limitingFactors": "SMEM",
+        "blockLimitRegs": 1,
+        "blockLimitSharedMem": 0,
+        "blockLimitWarps": 4,
+        "blockLimitBlocks": 32,
+        "blockLimitBarriers": 2147483647,
+        "allocatedRegistersPerBlock": 65536,
+        "allocatedSharedMemPerBlock": 233472
+      },
+      "graph id": 0,
+      "graph node id": 0,
+      "channel": 1,
+      "channel_type": 1
+    }
+  }
+}

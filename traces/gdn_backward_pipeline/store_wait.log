@@ -1,0 +1,29 @@
+BENCH 131072 0.001
+[W1013 11:46:53.358380388 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 3221225472 bytes (free: 1615659008, total: 85017886720).
+[W1013 11:46:53.513968390 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 1078788096, total: 85017886720).
+[W1013 11:46:53.519017838 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 1078788096, total: 85017886720).
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 274, in <module>
+    main()
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 266, in main
+    results[f"{length}_decay{decay}"] = benchmark(
+                                        ^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 171, in benchmark
+    expected = functions["flashqla_committed"]()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 163, in <lambda>
+    "flashqla_committed": lambda kwargs=kwargs: baseline(**kwargs),
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 62, in backward
+    dq, dk, dv, db, dg, dh = driver(**kwargs)
+                             ^^^^^^^^^^^^^^^^
+  File "traces/gdn_backward_pipeline/store_wait/reference_driver.py", line 171, in chunk_gated_delta_rule_bwd
+    dq, dk, dv, dg, db, dh0 = fused_gdr_bwd(
+                              ^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/traces/gdn_backward_pipeline/store_wait/reference_main.py", line 1173, in fused_gdr_bwd
+    dq = torch.empty_like(v)
+         ^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.50 GiB. GPU 0 has a total capacity of 79.18 GiB of which 1.00 GiB is free. Process 1864192 has 69.47 GiB memory in use. Process 2349967 has 8.69 GiB memory in use. Of the allocated memory 7.87 GiB is allocated by PyTorch, and 153.98 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)

@@ -1,0 +1,36 @@
+{
+  "scope": "M update and N projection paired; same buffers, precision, math and partition counts",
+  "default_overlap_mn": true,
+  "full_history_default": true,
+  "matched_benchmark_bitwise_equal": true,
+  "racecheck": {
+    "cases_passed": 6,
+    "kernel_filter": "kne=kernel_kernel",
+    "hazards": 0,
+    "errors": 0
+  },
+  "resources": {
+    "False": {
+      "usage": "\nResource usage:\n Common:\n  GLOBAL:0\n Function kernel_kernel:\n  REG:168 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:1408 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    },
+    "True": {
+      "usage": "\nResource usage:\n Common:\n  GLOBAL:0\n Function kernel_kernel:\n  REG:168 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:1408 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    }
+  },
+  "benchmarks": [
+    "pair16k.json",
+    "pair128k.json"
+  ],
+  "source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/prepare_mn.py": "e3cca2f5ae81abc919ca00c740ad7526345685d5b9fb793232081813226beaae",
+    "profile/bench_mn_overlap.py": "6ee0f9d40ca2d8e666423de8ea4346d7f0ab021d648ad2ed44a35db6b3b74b1e",
+    "tests/test_prepare_mn.py": "e1e150662ae975945e530535629f9836c6576747b8cd053f0431c9fbed7a30d7"
+  },
+  "forward_preparation_tests_passed": 44,
+  "training_tests_excluded": 6,
+  "new_overlap_tests_passed": 7
+}

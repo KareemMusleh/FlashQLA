@@ -1,0 +1,732 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "visible_devices": "7",
+  "reference_revision": "da06429d54b0f577de0a638f451ac8f0b395e0ac",
+  "reference_source_sha256": {
+    "driver": "76a00f8660bb38605839f015be533604b84b8300adadebbf7597ed98e3cc4fa3",
+    "math": "9c2cca70a25a94b9d3a76f49cb96e4a07dbe7125aa7b3fbd477ac4ec0f045262",
+    "main": "3a2466ec325a3e2e0eea0bbfec2dc6f6cf7406c1e1830f9688c86885924ac343"
+  },
+  "truncation": "off",
+  "scope": "Backward only, B=1 Hk=16 Hv=48 D=128 BF16; same tensor objects for inverse, cumulative gates, CP cache, upstream gradients; same equal partitions. No optimized-forward intermediates.",
+  "method": "Nine alternating CUDA graph samples; 50 alternating warmups; peak memory measured before graph capture",
+  "current_source_sha256": {
+    "profile/bench_fair_gdn_backward.py": "43918583fa02ae097768b27738a65feb97faba3804695eb2d0a54626118f3fb9",
+    "flash_qla/utils/math.py": "5cc42cfac207eae1f9c65f9e1f2483746ee94326fa31483abc57235e0ed05609",
+    "flash_qla/ops/gated_delta_rule/chunk/__init__.py": "8ddb253114b8484309e2640d7cf6ab4ab878a383b7e1ad2a28bfc4078eff7c44",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/fused_bwd.py": "14a4951ff7b1eb812d5813e2e2b711298541e509758820d934cdc42adea37c27"
+  },
+  "experimental_main": {
+    "path": "traces/gdn_backward_pipeline/qk_gate_overlap.py",
+    "sha256": "1977baf627c3aaefe04c78a3502599cd9184b3c53f8dee206d9fa1b5f96033f7"
+  },
+  "16384_decay0.001": {
+    "partitions": 8,
+    "boundaries": [
+      0,
+      2048,
+      4096,
+      6144,
+      8192,
+      10240,
+      12288,
+      14336,
+      16384
+    ],
+    "common_inverse_dtype": "torch.bfloat16",
+    "common_inverse_bytes": 100663296,
+    "common_partition_cache_bytes": 37750656,
+    "shared_fixture_bytes": 683673472,
+    "cached": {
+      "gradient_checks": {
+        "flashqla_committed": {
+          "dq": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        },
+        "optimized_postprocessing": {
+          "dq": {
+            "relative_rms": 4.7696233455502355e-06,
+            "bitwise_equal": false
+          },
+          "dk": {
+            "relative_rms": 4.081034244786449e-06,
+            "bitwise_equal": false
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        }
+      },
+      "memory": {
+        "flashqla_committed": {
+          "allocated_before_bytes": 683679744,
+          "peak_allocated_bytes": 1788878848,
+          "peak_increment_bytes": 1105199104
+        },
+        "optimized_postprocessing": {
+          "allocated_before_bytes": 683679744,
+          "peak_allocated_bytes": 1788878848,
+          "peak_increment_bytes": 1105199104
+        }
+      },
+      "main_gradient_checks": {
+        "flashqla_committed": {
+          "dq": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dh0": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        },
+        "current_main": {
+          "dq": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dh0": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        }
+      },
+      "main_self_repeat_checks": {
+        "flashqla_committed": [
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          }
+        ],
+        "current_main": [
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          }
+        ]
+      },
+      "main_kernel": {
+        "flashqla_committed": {
+          "median_ms": 1.0804896354675293,
+          "samples_ms": [
+            1.06495361328125,
+            1.066044807434082,
+            1.086515235900879,
+            1.0804896354675293,
+            1.0851776123046875,
+            1.0799424171447753,
+            1.0815296173095703,
+            1.0816991806030274,
+            1.0803008079528809
+          ]
+        },
+        "current_main": {
+          "median_ms": 1.1013888359069823,
+          "samples_ms": [
+            1.0812128067016602,
+            1.1119135856628417,
+            1.1028160095214843,
+            1.1013888359069823,
+            1.0965791702270509,
+            1.0971712112426757,
+            1.1017120361328125,
+            1.1033439636230469,
+            1.10032320022583
+          ]
+        }
+      },
+      "complete_backward": {
+        "flashqla_committed": {
+          "median_ms": 2.2628351211547852,
+          "samples_ms": [
+            2.2628351211547852,
+            2.268377685546875,
+            2.2562911987304686,
+            2.256982421875,
+            2.2557600021362303,
+            2.2622079849243164,
+            2.2649471282958986,
+            2.263907241821289,
+            2.265123176574707
+          ]
+        },
+        "optimized_postprocessing": {
+          "median_ms": 1.979974365234375,
+          "samples_ms": [
+            1.9774879455566405,
+            1.9736160278320312,
+            1.9754367828369142,
+            1.9814815521240234,
+            1.979974365234375,
+            1.9861120223999023,
+            1.9850879669189454,
+            1.9917375564575195,
+            1.9790016174316407
+          ]
+        }
+      }
+    }
+  },
+  "131072_decay0.001": {
+    "partitions": 8,
+    "boundaries": [
+      0,
+      16384,
+      32768,
+      49152,
+      65536,
+      81920,
+      98304,
+      114688,
+      131072
+    ],
+    "common_inverse_dtype": "torch.bfloat16",
+    "common_inverse_bytes": 805306368,
+    "common_partition_cache_bytes": 37750656,
+    "shared_fixture_bytes": 5205133184,
+    "cached": {
+      "gradient_checks": {
+        "flashqla_committed": {
+          "dq": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        },
+        "optimized_postprocessing": {
+          "dq": {
+            "relative_rms": 4.069484654259061e-06,
+            "bitwise_equal": false
+          },
+          "dk": {
+            "relative_rms": 4.0552800574340315e-06,
+            "bitwise_equal": false
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        }
+      },
+      "memory": {
+        "flashqla_committed": {
+          "allocated_before_bytes": 5205159936,
+          "peak_allocated_bytes": 13870592000,
+          "peak_increment_bytes": 8665432064
+        },
+        "optimized_postprocessing": {
+          "allocated_before_bytes": 5205159936,
+          "peak_allocated_bytes": 13870592000,
+          "peak_increment_bytes": 8665432064
+        }
+      },
+      "main_gradient_checks": {
+        "flashqla_committed": {
+          "dq": {
+            "relative_rms": 0.0008331834464839154,
+            "bitwise_equal": false
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dh0": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        },
+        "current_main": {
+          "dq": {
+            "relative_rms": 0.0006098742269828733,
+            "bitwise_equal": false
+          },
+          "dk": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dv": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dg": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "db": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          },
+          "dh0": {
+            "relative_rms": 0.0,
+            "bitwise_equal": true
+          }
+        }
+      },
+      "main_self_repeat_checks": {
+        "flashqla_committed": [
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          }
+        ],
+        "current_main": [
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          },
+          {
+            "dq": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dk": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dv": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dg": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "db": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            },
+            "dh0": {
+              "relative_rms": 0.0,
+              "bitwise_equal": true
+            }
+          }
+        ]
+      },
+      "main_kernel": {
+        "flashqla_committed": {
+          "median_ms": 8.581583976745605,
+          "samples_ms": [
+            9.4891357421875,
+            9.557439804077148,
+            9.262384414672852,
+            9.04470443725586,
+            8.556127548217773,
+            8.581583976745605,
+            8.27724838256836,
+            8.324687957763672,
+            8.308768272399902
+          ]
+        },
+        "current_main": {
+          "median_ms": 8.665583610534668,
+          "samples_ms": [
+            9.324064254760742,
+            9.491040229797363,
+            9.370271682739258,
+            8.8296480178833,
+            8.665583610534668,
+            8.437472343444824,
+            8.361663818359375,
+            8.212688446044922,
+            8.227231979370117
+          ]
+        }
+      },
+      "complete_backward": {
+        "flashqla_committed": {
+          "median_ms": 17.274160385131836,
+          "samples_ms": [
+            17.02337646484375,
+            17.020191192626953,
+            17.376447677612305,
+            17.274160385131836,
+            17.732383728027344,
+            17.620800018310547,
+            17.414512634277344,
+            17.235136032104492,
+            17.13804817199707
+          ]
+        },
+        "optimized_postprocessing": {
+          "median_ms": 14.923312187194824,
+          "samples_ms": [
+            14.79377555847168,
+            14.769760131835938,
+            14.923312187194824,
+            15.396112442016602,
+            15.558863639831543,
+            15.223919868469238,
+            15.214703559875488,
+            14.7674560546875,
+            14.875151634216309
+          ]
+        }
+      }
+    }
+  }
+}

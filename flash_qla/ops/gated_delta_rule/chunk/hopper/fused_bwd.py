@@ -32,11 +32,17 @@ def tilelang_fused_chunk_gdr_bwd(
     is_varlen,
     use_dht,
     state_v_first,
+    a_token_stride=None,
+    do_token_stride=None,
 ):
     batch_size = T.dynamic("batch_size")
     num_tokens = T.dynamic("num_tokens")
     num_chunks = T.dynamic("num_chunks")
     block_S = chunk_size
+    a_token_stride = H * chunk_size if a_token_stride is None else a_token_stride
+    do_token_stride = H * DV if do_token_stride is None else do_token_stride
+    a_strides = (T.Cast("int64", num_tokens) * a_token_stride, T.int64(a_token_stride), chunk_size, 1)
+    do_strides = (T.Cast("int64", num_tokens) * do_token_stride, T.int64(do_token_stride), DV, 1)
 
     if is_varlen:
         q_shape = (1, num_tokens, Hg, DK)
@@ -77,12 +83,12 @@ def tilelang_fused_chunk_gdr_bwd(
 
     @T.prim_func
     def tilelang_fused_chunk_gdr_bwd_kernel(
-        do: T.Tensor(o_shape, dtype=o_dtype),
+        do: T.StridedTensor(o_shape, do_strides, dtype=o_dtype),
         dht: T.Tensor(ht_shape, dtype=accum_dtype),
         q: T.Tensor(q_shape, dtype=qkva_dtype),
         k: T.Tensor(k_shape, dtype=qkva_dtype),
         v: T.Tensor(v_shape, dtype=qkva_dtype),
-        a: T.Tensor(a_shape, dtype=qkva_dtype),
+        a: T.StridedTensor(a_shape, a_strides, dtype=qkva_dtype),
         g: T.Tensor(g_shape, dtype=g_dtype),
         b: T.Tensor(b_shape, dtype=b_dtype),
         h: T.Tensor(h_shape, dtype=h_dtype),
@@ -1144,7 +1150,7 @@ def fused_gdr_bwd(
 ):
     batch_size, num_tokens, Hg, K = k.shape
     _, _, H, V = v.shape
-    scale = scale or K ** (-0.5)
+    scale = K ** (-0.5) if scale is None else scale
     assert K == V == 128
     assert chunk_size == 64
 
@@ -1194,6 +1200,8 @@ def fused_gdr_bwd(
         is_varlen=is_varlen,
         use_dht=use_dht,
         state_v_first=state_v_first,
+        a_token_stride=a.stride(1),
+        do_token_stride=do.stride(1),
     )
     tilelang_fused_chunk_gdr_bwd_kernel(
         do,

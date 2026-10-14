@@ -5,6 +5,7 @@ import torch
 import tilelang
 
 from flash_qla.utils import l2norm_fwd, l2norm_bwd, prepare_chunk_offsets
+from flash_qla.utils.math import group_reduce_l2norm_bwd
 from flash_qla.ops.utils import chunk_local_cumsum, group_reduce_vector
 
 # `aggregate_card_state` is only needed by combined inter+intra CP. It relies on the
@@ -139,7 +140,17 @@ def chunk_gated_delta_rule_bwd(
     auto_cp: bool = True,
     cp_cache=None,
     cp_context=None,
+    q_rstd: torch.Tensor | None = None,
+    k_rstd: torch.Tensor | None = None,
 ):
+    """Compute input gradients, optionally including Q/K normalization backward.
+
+    Supplying both normalization statistics fuses grouped-head reduction,
+    normalization, and the output cast. Without them, return gradients with
+    respect to the already-normalized Q/K, as in the standalone low-level API.
+    """
+    if (q_rstd is None) != (k_rstd is None):
+        raise ValueError('q_rstd and k_rstd must be supplied together')
     if fused_gdr_bwd is None:
         raise NotImplementedError(
             "Backward pass is not implemented for this architecture."
@@ -186,7 +197,14 @@ def chunk_gated_delta_rule_bwd(
             dh0[0] = 0
 
     Hg, H = k.shape[-2], v.shape[-2]
-    if Hg < H:
+    if q_rstd is not None and k_rstd is not None:
+        if Hg < H:
+            dq = group_reduce_l2norm_bwd(q, q_rstd, dq)
+            dk = group_reduce_l2norm_bwd(k, k_rstd, dk)
+        else:
+            dq = l2norm_bwd(q, q_rstd, dq, output_dtype=q.dtype)
+            dk = l2norm_bwd(k, k_rstd, dk, output_dtype=k.dtype)
+    elif Hg < H:
         dq = group_reduce_vector(dq, Hg)
         dk = group_reduce_vector(dk, Hg)
     assert dg.dtype == torch.float32, "dg should be fp32"
@@ -198,6 +216,28 @@ def chunk_gated_delta_rule_bwd(
         zero_last_chunk=True,
     )
     return dq, dk, dv, db, dg, dh0
+
+
+def chunk_gated_delta_rule_bwd_from_context(ctx, do, dht=None, *, inverse_out=None):
+    """Existing backward math with optional ephemeral Hopper inverse workspace.
+
+    Internal layer callers may supply pitched DO/inverse buffers. They must
+    already satisfy the kernel dtype/layout contracts; no input copy is made.
+    Ordinary public autograd callers retain their input guard.
+    """
+    q, k, qr, kr, v, g, beta, A, initial_state, cu = ctx.saved_tensors
+    if A is None:
+        g = chunk_local_cumsum(g=g, cu_seqlens=ctx.cp_context.cu_seqlens, chunk_size=CHUNK_SIZE)
+        extra = {} if inverse_out is None else {"out": inverse_out}
+        A = kkt_solve(k=k, b=beta, cu_seqlens=ctx.cp_context.cu_seqlens,
+                      chunk_size=CHUNK_SIZE, **extra)
+    dq, dk, dv, db, dg, dh0 = chunk_gated_delta_rule_bwd(
+        q=q, k=k, v=v, g=g, beta=beta, A=A, do=do, dht=dht,
+        scale=ctx.scale, initial_state=initial_state, cu_seqlens=cu,
+        state_v_first=ctx.state_v_first, auto_cp=ctx.autocp,
+        cp_cache=ctx.cp_cache, cp_context=ctx.cp_context, q_rstd=qr, k_rstd=kr,
+    )
+    return dq.to(q), dk.to(k), dv.to(v), dg.to(g), db.to(beta), dh0
 
 
 class ChunkGatedDeltaRuleFunction(torch.autograd.Function):
@@ -222,6 +262,9 @@ class ChunkGatedDeltaRuleFunction(torch.autograd.Function):
         cp_context=None,
         force_intra_cp: bool = False,
         is_train: bool = False,
+        optimized_partitions: int | None = None,
+        decay_threshold: float | None = None,
+        cache_optimized_inverse: bool = False,
     ):
         q_rstd, k_rstd = None, None
         if use_qk_l2norm_in_kernel:
@@ -235,23 +278,52 @@ class ChunkGatedDeltaRuleFunction(torch.autograd.Function):
                 force_intra_cp=force_intra_cp,
             )
 
-        g, A, o, _, final_state, cp_cache = chunk_gated_delta_rule_fwd(
-            q=q,
-            k=k,
-            v=v,
-            g=g,
-            beta=beta,
-            scale=scale,
-            initial_state=initial_state,
-            output_final_state=output_final_state,
-            output_h=False,
-            cu_seqlens=cu_seqlens,
-            state_v_first=state_v_first,
-            auto_cp=auto_cp,
-            enable_fwd_cp_cache=enable_fwd_cp_cache,
-            cp_context=cp_context,
-            is_train=is_train,
-        )
+        if optimized_partitions is not None:
+            from .hopper.fast_fwd import chunk_gated_delta_rule_hopper, _training_cp_context
+
+            cache_partitions = (cache_optimized_inverse and enable_fwd_cp_cache
+                                and cp_context.is_intra and optimized_partitions > 1
+                                and decay_threshold is None)
+            if cache_partitions:
+                cp_context = _training_cp_context(k.device, k.shape[1], optimized_partitions)
+
+            result = chunk_gated_delta_rule_hopper(
+                q, k, v, g, beta, partitions=optimized_partitions, scale=scale,
+                initial_state=initial_state, output_final_state=output_final_state,
+                state_v_first=state_v_first, decay_threshold=decay_threshold,
+                return_intermediates=cache_optimized_inverse,
+                return_cp_cache=cache_partitions,
+            )
+            # The folded forward inverse cannot feed the default backward.
+            # Either retain its unfolded inverse and gates, or rebuild the
+            # default intermediates on demand to preserve the default precision.
+            if cache_partitions:
+                o, final_state, g, A, cp_cache = result
+            elif cache_optimized_inverse:
+                o, final_state, g, A = result
+                cp_cache = None
+            else:
+                o, final_state = result
+                A = None
+                cp_cache = None
+        else:
+            g, A, o, _, final_state, cp_cache = chunk_gated_delta_rule_fwd(
+                q=q,
+                k=k,
+                v=v,
+                g=g,
+                beta=beta,
+                scale=scale,
+                initial_state=initial_state,
+                output_final_state=output_final_state,
+                output_h=False,
+                cu_seqlens=cu_seqlens,
+                state_v_first=state_v_first,
+                auto_cp=auto_cp,
+                enable_fwd_cp_cache=enable_fwd_cp_cache,
+                cp_context=cp_context,
+                is_train=is_train,
+            )
 
         ctx.save_for_backward(q, k, q_rstd, k_rstd, v, g, beta, A, initial_state, cu_seqlens)
         ctx.scale = scale
@@ -266,36 +338,14 @@ class ChunkGatedDeltaRuleFunction(torch.autograd.Function):
     @input_guard
     @torch.amp.custom_bwd(device_type="cuda")
     def backward(ctx, do: torch.Tensor, dht: torch.Tensor):
-        q, k, q_rstd, k_rstd, v, g, beta, A, initial_state, cu_seqlens = ctx.saved_tensors
-
-        dq, dk, dv, db, dg, dh0 = chunk_gated_delta_rule_bwd(
-            q=q,
-            k=k,
-            v=v,
-            g=g,
-            beta=beta,
-            A=A,
-            do=do,
-            dht=dht,
-            scale=ctx.scale,
-            initial_state=initial_state,
-            cu_seqlens=cu_seqlens,
-            state_v_first=ctx.state_v_first,
-            auto_cp=ctx.autocp,
-            cp_cache=ctx.cp_cache,
-            cp_context=ctx.cp_context,
-        )
-
-        if ctx.use_qk_l2norm_in_kernel:
-            dq = l2norm_bwd(q, q_rstd, dq)
-            dk = l2norm_bwd(k, k_rstd, dk)
+        dq, dk, dv, dg, db, dh0 = chunk_gated_delta_rule_bwd_from_context(ctx, do, dht)
 
         return (
-            dq.to(q),
-            dk.to(k),
-            dv.to(v),
-            dg.to(g),
-            db.to(beta),
+            dq,
+            dk,
+            dv,
+            dg,
+            db,
             None,          # scale
             dh0,           # initial_state
             None,          # output_final_state
@@ -307,6 +357,9 @@ class ChunkGatedDeltaRuleFunction(torch.autograd.Function):
             None,          # cp_context
             None,          # force_intra_cp
             None,          # is_train
+            None,          # optimized_partitions
+            None,          # decay_threshold
+            None,          # cache_optimized_inverse
         )
 
 
@@ -328,6 +381,10 @@ def chunk_gated_delta_rule(
     enable_fwd_cp_cache: bool = True,
     cp_context=None,
     force_intra_cp: bool = False,
+    fwd_backend: str = "default",
+    fwd_partitions: int = 8,
+    fwd_decay_threshold: float | None = None,
+    bwd_backend: str = "default",
 ):
     r"""
     Args:
@@ -368,10 +425,39 @@ def chunk_gated_delta_rule(
             Whether to cache CP related variables during the forward pass. Default: `True`.
             Ignored when no backward will follow (no input requires grad, or grad is
             disabled), since nothing would ever read the cache.
+            With optimized forward and backward, full-history intra-CP training
+            retains partition initial states and transfer matrices as well.
+            Forward and backward then use the same equal partition boundaries.
+            Other optimized training modes rebuild the backward partition state.
         force_intra_cp (Optional[bool]):
             Whether to bypass the intra-card CP decision and always split. Ignored when
             `auto_cp=False` (which disables intra CP outright) or when an explicit
             `cp_context` is passed. Intended for tests and profiling. Default: `False`.
+
+        fwd_backend (str):
+            "optimized" selects the Hopper forward path for
+            aligned B=1 BF16 inputs with D=128. Its local inverse uses FP16
+            intermediates. Training uses this forward with the default FlashQLA
+            backward, rebuilding its intermediates during backward. Unsupported
+            layouts use the default implementation. Default: "default".
+        fwd_partitions (int):
+            Equal partition count for the optimized path. Default: 8.
+            auto_cp=False requests one partition.
+        fwd_decay_threshold (float | None):
+            Optional cumulative decay cutoff for optimized partition preparation.
+            For example, 5e-5 discards an older prefix after a retained suffix
+            decays below that value. Assumes nonpositive log gates.
+            None disables truncation (default). Only affects the optimized path.
+        bwd_backend (str):
+            "optimized" retains the unfolded inverse and cumulative gates from
+            eligible optimized training forwards, avoiding their recomputation
+            in backward. The existing backward kernels are used. This retains
+            an additional BF16 inverse (T * HV * 64 elements) and uses the
+            optimized local solve's FP16 intermediate precision. Requires an
+            eligible fwd_backend="optimized"; other inputs use the default path.
+            With enable_fwd_cp_cache=True and full-history intra-CP training,
+            also reuse optimized partition states with matching boundaries.
+            "default" rebuilds the default inverse during optimized training.
 
     Returns:
         o (torch.Tensor):
@@ -447,6 +533,36 @@ def chunk_gated_delta_rule(
     )
     enable_fwd_cp_cache = bool(enable_fwd_cp_cache) and is_train
 
+    if fwd_backend not in ("default", "optimized"):
+        raise ValueError("fwd_backend must be 'default' or 'optimized'")
+    if bwd_backend not in ("default", "optimized"):
+        raise ValueError("bwd_backend must be 'default' or 'optimized'")
+    if not isinstance(fwd_partitions, int) or fwd_partitions < 1:
+        raise ValueError("fwd_partitions must be a positive integer")
+    if fwd_decay_threshold is not None and not 0 < fwd_decay_threshold < 1:
+        raise ValueError("fwd_decay_threshold must be None or a number in (0, 1)")
+    optimized_partitions = None
+    if fwd_backend == "optimized":
+        parts = fwd_partitions if auto_cp else 1
+        eligible = (
+            cp_context is None and cu_seqlens is None and q.shape == k.shape
+            and q.shape[0] == 1 and q.shape[-1] == v.shape[-1] == 128
+            and q.shape[1] % (parts * 64) == 0
+            and q.dtype == torch.bfloat16 and g.dtype == beta.dtype == torch.float32
+            and q.is_cuda and torch.cuda.get_device_capability(q.device)[0] == 9
+            and all(t.is_contiguous() for t in (q, k, v, g, beta))
+        )
+        if eligible and is_train:
+            optimized_partitions = parts
+        elif eligible:
+            from .hopper.fast_fwd import chunk_gated_delta_rule_hopper
+            return chunk_gated_delta_rule_hopper(
+                q, k, v, g, beta, partitions=parts, scale=scale,
+                initial_state=initial_state, output_final_state=output_final_state,
+                use_qk_l2norm_in_kernel=use_qk_l2norm_in_kernel,
+                state_v_first=state_v_first, decay_threshold=fwd_decay_threshold,
+            )
+
     o, final_state = ChunkGatedDeltaRuleFunction.apply(
         q,
         k,
@@ -464,6 +580,9 @@ def chunk_gated_delta_rule(
         cp_context,
         force_intra_cp,
         is_train,
+        optimized_partitions,
+        fwd_decay_threshold,
+        optimized_partitions is not None and bwd_backend == "optimized",
     )
 
     return o, final_state

@@ -1,0 +1,39 @@
+{
+  "tests_passed": 32,
+  "truncation_threshold": 5e-05,
+  "default_threshold": null,
+  "flashinfer_comparison_threshold": null,
+  "optimized_racecheck": {
+    "cases": 3,
+    "kernel_filter": "kne=kernel_kernel",
+    "errors": 0,
+    "warnings": 0
+  },
+  "unfiltered_racecheck": {
+    "errors": 28,
+    "reported_kernel": "tilelang_kkt_solve_kernel_kernel",
+    "scope": "Legacy reference construction; optimized forward uses local_precompute instead"
+  },
+  "prepare_mn_resources": {
+    "full": {
+      "resource_usage": "\nResource usage:\n Common:\n  GLOBAL:0\n Function kernel_kernel:\n  REG:168 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:1408 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    },
+    "truncated": {
+      "resource_usage": "\nResource usage:\n Common:\n  GLOBAL:0\n Function kernel_kernel:\n  REG:168 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:1536 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    }
+  },
+  "source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/prepare_mn.py": "848536c891b7fd032d032fd824b46003434d40bef2ea2d2dade151f5673c300b",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/fast_fwd.py": "c34e78de0d11c80567ccc31b2c379b683a05223745da44b7764a410a614ca8f7",
+    "flash_qla/ops/gated_delta_rule/chunk/__init__.py": "520b15ad89bebbd6e80f96966e3e499db58cb5209adce14a262ce008f361d2d9",
+    "profile/bench_fast_gdn.py": "0796adf72dd1159c2b584376e537cf5554e827a6e678cb3de5b864430f3bb3e0"
+  },
+  "integration_recheck": {
+    "cases_passed": 3,
+    "reason": "Concurrent local/output kernel experiments; truncation source unchanged except address-expression cleanup"
+  }
+}

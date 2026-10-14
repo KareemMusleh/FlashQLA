@@ -1,0 +1,234 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "conv_backend": "dao",
+    "compare_conv_backends": false,
+    "norm_eps": 1e-06,
+    "norm_gate_mode": "fused",
+    "projection_mode": "packed",
+    "dt_max": 0.01,
+    "partitions": 8,
+    "gdn_backend": "optimized",
+    "output": "traces/qwen38_flash_next_layer_16k_fused"
+  },
+  "shapes": {
+    "input": [
+      16384,
+      2560
+    ],
+    "input_projection_weights_q_k_v_z_a_b": [
+      [
+        2048,
+        2560
+      ],
+      [
+        2048,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        48,
+        2560
+      ],
+      [
+        48,
+        2560
+      ]
+    ],
+    "conv_weights_q_k_v": [
+      [
+        2048,
+        4
+      ],
+      [
+        2048,
+        4
+      ],
+      [
+        6144,
+        4
+      ]
+    ],
+    "q_k": [
+      1,
+      16384,
+      16,
+      128
+    ],
+    "v_output": [
+      1,
+      16384,
+      48,
+      128
+    ],
+    "g_beta": [
+      1,
+      16384,
+      48
+    ],
+    "output_projection_weight": [
+      2560,
+      6144
+    ]
+  },
+  "scope": "complete GatedDeltaNet attention module forward; synthetic weights; one sequence; no cache/CP; full history; no residual or MLP",
+  "initialization": "unit-variance scaled linear and conv weights; YDT decay-bias formula with configurable dt upper bound; BF16 activations/weights, FP32 decay/beta",
+  "timing": "9 rotating-order CUDA graph samples; 30 replays per sample; stages use precomputed inputs; end-to-end recomputes all intermediates",
+  "correctness": {
+    "gdn_relative_rms": 0.004472171422094107,
+    "layer_relative_rms": 0.005389695055782795,
+    "finite": true,
+    "reference_finite": true,
+    "minimum_chunk_log_decay": -23.976375579833984,
+    "convolution_relative_rms_vs_torch": [
+      6.365062290569767e-06,
+      7.886002890700183e-07,
+      7.880314115027431e-06
+    ]
+  },
+  "references": {
+    "gdn.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/gdn.py",
+      "sha256": "bf9aeeb3c1fa8d1ccff95a9e33af60c80c9f526c153af5e85f7da5520a933b85"
+    },
+    "delta_rule.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/delta_rule.py",
+      "sha256": "d60a35a15da4b954e6b6f7c28a539dde80d5bee18b51e11793d2dfab043c472f"
+    }
+  },
+  "convolution_implementations": {
+    "triton": "FLA Triton forward",
+    "cuda": "FLA wrapper around Dao causal-conv1d; includes sequence metadata preparation",
+    "dao": "Direct Dao causal-conv1d; one sequence, transposes are views, no sequence-id tensor needed"
+  },
+  "packages": {
+    "torch": "2.13.0+cu130",
+    "causal-conv1d": "1.7.0"
+  },
+  "timings": {
+    "input_projections": {
+      "median_ms": 1.9150304158528646,
+      "samples_ms": [
+        1.8070357004801432,
+        1.8787893931070963,
+        1.911230977376302,
+        1.9476853688557942,
+        1.996136474609375,
+        1.926580301920573,
+        1.9150304158528646,
+        2.0827402750651043,
+        1.8560384114583333
+      ]
+    },
+    "convolution_silu": {
+      "median_ms": 0.28656107584635415,
+      "samples_ms": [
+        0.27656319936116536,
+        0.27428159713745115,
+        0.28190186818440754,
+        0.28656107584635415,
+        0.2867424011230469,
+        0.287881596883138,
+        0.29615999857584635,
+        0.30553706487019855,
+        0.2782485326131185
+      ]
+    },
+    "decay_beta": {
+      "median_ms": 0.027433600028355917,
+      "samples_ms": [
+        0.02495573361714681,
+        0.024310400088628132,
+        0.027477333943049114,
+        0.027433600028355917,
+        0.026978133122126262,
+        0.027521065870920815,
+        0.028858667612075804,
+        0.029873067140579225,
+        0.02540266712506612
+      ]
+    },
+    "qk_normalization": {
+      "median_ms": 0.0990613301595052,
+      "samples_ms": [
+        0.09844053586324056,
+        0.09815573692321777,
+        0.09880639712015787,
+        0.0990997314453125,
+        0.0990613301595052,
+        0.09968746503194173,
+        0.1003445307413737,
+        0.09927786986033121,
+        0.09817919731140137
+      ]
+    },
+    "gdn_optimized": {
+      "median_ms": 0.7854101181030273,
+      "samples_ms": [
+        0.7794048309326171,
+        0.7294442494710286,
+        0.8186815897623698,
+        0.7339040120442708,
+        0.7854101181030273,
+        0.769494374593099,
+        0.8072298685709636,
+        0.8767018636067708,
+        0.7908714930216472
+      ]
+    },
+    "output_norm_gate": {
+      "median_ms": 0.19941439628601074,
+      "samples_ms": [
+        0.19953920046488444,
+        0.19941439628601074,
+        0.19964267412821451,
+        0.1993610699971517,
+        0.19927147229512532,
+        0.19976000785827636,
+        0.19932479858398439,
+        0.19968427022298177,
+        0.19936213493347169
+      ]
+    },
+    "output_projection": {
+      "median_ms": 0.673141352335612,
+      "samples_ms": [
+        0.665830421447754,
+        0.673141352335612,
+        0.68111572265625,
+        0.6546186447143555,
+        0.6564277648925781,
+        0.6869759877522786,
+        0.6684096018473308,
+        0.7294826507568359,
+        0.6745951970418295
+      ]
+    },
+    "layer_optimized": {
+      "median_ms": 3.8949259440104167,
+      "samples_ms": [
+        3.7995445251464846,
+        3.8949259440104167,
+        3.863791910807292,
+        4.29935048421224,
+        3.915045420328776,
+        3.8952512105305988,
+        3.8262283325195314,
+        4.034763844807943,
+        3.8456746419270833
+      ]
+    }
+  }
+}

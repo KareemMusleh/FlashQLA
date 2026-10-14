@@ -1,0 +1,31 @@
+Matched partitions: FlashInfer versus FlashQLA
+B=1, T=16384, Hk=16, Hv=48, D=128; BF16 QKV, FP32 gates; H100 GPU 1.
+CUDA graphs; nine rotating-order samples of 30 replays, warmed before capture
+forward-only; no initial/final state; scale=128**-0.5
+FlashQLA logsigmoid(N(0,1))/16; FlashInfer exp(log_gate), conversion outside timing
+FlashInfer commit: 50829ac2644704439260ac646067c0fc8c9bd0f5
+Benchmark-local get_warmup_chunks threshold=-inf; all needed partition chunks processed, no decay truncation
+Partition metadata built outside timing; kernel work including normalization captured in CUDA graphs.
+
+including_qk_norm
+  2 equal partitions of 8192 tokens, 96 main-kernel CTAs in each implementation
+    flashinfer_p2: 0.738578 ms; RMS difference vs FlashQLA no-CP 0.00271665
+    flashqla_full_p2: 1.311216 ms; RMS difference vs FlashQLA no-CP 0.000192402
+    flashqla_truncated_p2: 0.778964 ms; RMS difference vs FlashQLA no-CP 0.000192527
+  8 equal partitions of 2048 tokens, 384 main-kernel CTAs in each implementation
+    flashinfer_p8: 0.726081 ms; RMS difference vs FlashQLA no-CP 0.00271951
+    flashqla_full_p8: 1.113419 ms; RMS difference vs FlashQLA no-CP 0.000512331
+    flashqla_truncated_p8: 0.699446 ms; RMS difference vs FlashQLA no-CP 0.000512317
+
+prenormalized_qk
+  2 equal partitions of 8192 tokens, 96 main-kernel CTAs in each implementation
+    flashinfer_p2: 0.649302 ms; RMS difference vs FlashQLA no-CP 0.00271665
+    flashqla_full_p2: 1.249146 ms; RMS difference vs FlashQLA no-CP 0.000192402
+    flashqla_truncated_p2: 0.690239 ms; RMS difference vs FlashQLA no-CP 0.000192527
+  8 equal partitions of 2048 tokens, 384 main-kernel CTAs in each implementation
+    flashinfer_p8: 0.636764 ms; RMS difference vs FlashQLA no-CP 0.00271951
+    flashqla_full_p8: 1.022913 ms; RMS difference vs FlashQLA no-CP 0.000512331
+    flashqla_truncated_p8: 0.615945 ms; RMS difference vs FlashQLA no-CP 0.000512317
+
+No production kernel or heuristic was changed. Full-boundary mode is a benchmark-local threshold override.
+Full-boundary refers to no decay-history truncation, not exact arithmetic: both implementations still use their native finite-precision arithmetic.

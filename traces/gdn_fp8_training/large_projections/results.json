@@ -1,0 +1,131 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "visible_devices": "0",
+  "fp8_projections": [
+    "q",
+    "k",
+    "v",
+    "z",
+    "out"
+  ],
+  "shape": {
+    "batch": 1,
+    "hidden": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "head_dim": 128,
+    "partitions": 8
+  },
+  "precision": "Per-row E4M3 activation/per-output-channel E4M3 weight, FP32 scales, BF16 output; BF16 input and parameter gradients using BF16 backward GEMMs. Straight-through dW uses original BF16 X; dX uses runtime-dequantized FP8 W.",
+  "timing": "Weight quantization is excluded (explicit preparation between optimizer steps). Activation quantization, weight dequantization, BF16 dX and dW GEMMs included. No cached dequantized weight. CUDA graphs: 50 alternating warmups, nine alternating-order samples.",
+  "full_layer": "Identical standard GDN forward/backward, saved intermediates, P8 and decay truncation off; fused training norm/gate in both variants. Includes all parameter/input gradients; excludes loss/optimizer.",
+  "projections": "Each of seven projections measured with BF16 fixed inputs/upstream gradients and both dX/dW; input-gradient summation for shared input is excluded in this isolated scope.",
+  "source_sha256": {
+    "profile/bench_gdn_fp8_training.py": "90401e83626212fc28fd2109f23d1f57863f83bc0e0d57f923ba18bc1bb676df",
+    "flash_qla/ops/fp8_linear.py": "ed9a5ca3a657282794092004d14203f114e27f2e643123257d82c696ffef81ca",
+    "profile/bench_gdn_full_layer_training.py": "b59be05e7140d36a1b0aa5d74c865c3d413f17ee26852d84e39c04ebf5b526d5"
+  },
+  "16384": {
+    "full_layer": {
+      "output_relative_rms": 0.08242775299022727,
+      "gradient_relative_rms": {
+        "input": 0.08344937071563277,
+        "norm": 0.06793566506252473,
+        "A_log": 0.12269482274715457,
+        "dt_bias": 0.12269333476166425,
+        "q.weight": 0.08016226064931076,
+        "k.weight": 0.08637327229760902,
+        "v.weight": 0.07803769321438593,
+        "z.weight": 0.07064408218809531,
+        "a.weight": 0.08835018235057134,
+        "b.weight": 0.0889683412230145,
+        "out.weight": 0.07393776811736702,
+        "conv.0": 0.0881353395028748,
+        "conv.1": 0.09128436088293765,
+        "conv.2": 0.08205747056924591
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 13.365536499023438,
+          "samples_ms": [
+            13.317765808105468,
+            13.673529052734375,
+            13.202003479003906,
+            13.330841064453125,
+            14.017613220214844,
+            13.502438354492188,
+            13.404698181152344,
+            13.365536499023438,
+            13.154925537109374
+          ]
+        },
+        "fp8": {
+          "median_ms": 12.822592163085938,
+          "samples_ms": [
+            12.537741088867188,
+            12.822592163085938,
+            12.557810974121093,
+            13.080697631835937,
+            13.485069274902344,
+            13.088249206542969,
+            12.952467346191407,
+            12.52881317138672,
+            12.504134368896484
+          ]
+        }
+      }
+    }
+  },
+  "131072": {
+    "full_layer": {
+      "output_relative_rms": 0.0827617208774725,
+      "gradient_relative_rms": {
+        "input": 0.08365709717859182,
+        "norm": 0.07087944394969267,
+        "A_log": 0.08504423321999345,
+        "dt_bias": 0.08504632048191303,
+        "q.weight": 0.08014935309197738,
+        "k.weight": 0.08649359678788072,
+        "v.weight": 0.07799964684193075,
+        "z.weight": 0.07101586477308797,
+        "a.weight": 0.08723511409393388,
+        "b.weight": 0.08963419751199878,
+        "out.weight": 0.07426663318505192,
+        "conv.0": 0.08742648630469098,
+        "conv.1": 0.09302340033226084,
+        "conv.2": 0.08224678357552728
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 108.36479949951172,
+          "samples_ms": [
+            108.13775634765625,
+            109.89078521728516,
+            108.36479949951172,
+            107.3783187866211,
+            108.4256820678711,
+            108.07542419433594,
+            107.41932678222656,
+            108.44134521484375,
+            109.7609634399414
+          ]
+        },
+        "fp8": {
+          "median_ms": 102.94097900390625,
+          "samples_ms": [
+            103.5628662109375,
+            102.70673370361328,
+            102.94097900390625,
+            105.19356536865234,
+            101.27139282226562,
+            102.85675048828125,
+            104.18292999267578,
+            102.19220733642578,
+            103.21011352539062
+          ]
+        }
+      }
+    }
+  }
+}

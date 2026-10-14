@@ -1,0 +1,71 @@
+SEQLEN 16384
+[10:15:38] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[10:15:38] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[10:15:38] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[10:15:38] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+2026-10-14 10:14:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_chunk_local_cumsum_kernel` with `out_idx=None`
+2026-10-14 10:14:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_chunk_local_cumsum_kernel`
+2026-10-14 10:14:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_kkt_solve_kernel` with `out_idx=None`
+2026-10-14 10:14:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_kkt_solve_kernel`
+2026-10-14 10:14:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_get_warmup_chunks_bidi_kernel` with `out_idx=None`
+2026-10-14 10:14:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_get_warmup_chunks_bidi_kernel`
+2026-10-14 10:14:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_prepare_h_kernel` with `out_idx=None`
+2026-10-14 10:14:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_prepare_h_kernel`
+2026-10-14 10:14:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_correct_h0_kernel` with `out_idx=None`
+2026-10-14 10:14:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_correct_h0_kernel`
+2026-10-14 10:14:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_fused_chunk_gdr_fwd_kernel` with `out_idx=None`
+2026-10-14 10:14:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_fused_chunk_gdr_fwd_kernel`
+2026-10-14 10:14:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_correct_h0_kernel` with `out_idx=None`
+2026-10-14 10:15:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_correct_h0_kernel`
+2026-10-14 10:15:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel` with `out_idx=None`
+2026-10-14 10:15:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel`
+2026-10-14 10:15:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_chunk_local_cumsum_kernel` with `out_idx=None`
+2026-10-14 10:16:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_chunk_local_cumsum_kernel`
+check original 0.0 1.5146846202560367e-06
+check shared 0.0 0.00010707575495709971
+check combined 0.0 0.003665587048759902
+2026-10-14 10:16:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_group_reduce_vector_kernel` with `out_idx=None`
+2026-10-14 10:16:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_group_reduce_vector_kernel`
+check conv_only 0.007893314841379975 0.005491763977560859
+check conv 0.007893314841379975 0.00520058225710446
+check state 0.0 2.656268167260377e-05
+2026-10-14 10:16:05  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:357): Found kernel 'tilelang_prepare_h_kernel' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+check all 0.007893314841379975 0.00520058225710446
+timing {'original': 12.558752059936523, 'shared': 12.24841594696045, 'combined': 11.991392135620117, 'conv_only': 12.470879554748535, 'conv': 12.102656364440918, 'state': 12.57759952545166, 'all': 12.18057632446289}
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:09 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+SEQLEN 131072
+check original 0.0 8.426905489545579e-05
+check shared 0.0 5.653920478293798e-05
+check combined 0.0 0.003665424836371135
+check conv_only 0.013149287886986766 0.006721929465932563
+check conv 0.013149287886986766 0.006434259818774601
+check state 0.0 2.8041246872609694e-05
+check all 0.013149287886986766 0.006434259818774601
+timing {'original': 100.69789123535156, 'shared': 99.93043518066406, 'combined': 100.69395446777344, 'conv_only': 102.49494171142578, 'conv': 100.26070404052734, 'state': 101.66051483154297, 'all': 100.43305969238281}
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:16:50 191389:191389 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:16:51 191389:191389 SyncActivityProfilerHandler.cpp:59] profiler_stop

@@ -1,0 +1,30 @@
+FlashQLA GDN gradient postprocessing optimization
+H100, BF16, batch 1, Hk=16, Hv=48, D=128; synthetic gates and inputs.
+Baseline reproduces original reduction + FP32 compiled normalization + BF16 copy.
+Cast-only fuses the BF16 conversion into torch.compile.
+Fused uses Triton to combine grouped-head reduction, normalization, and conversion.
+Preserves FP32 group accumulation and BF16 rounding before normalization.
+Measurement: nine rotating-order samples of ten CUDA-graph replays per variant.
+Earlier sequential runs experienced interference; use these interleaved results.
+
+Sequence length 16384:
+  interleaved_forward_backward: original 2.7815 ms; cast 2.4615 ms; fused 2.3664 ms; latency reduction 14.92%; speedup 1.175x
+  interleaved_backward: original 2.1048 ms; cast 1.7802 ms; fused 1.6862 ms; latency reduction 19.89%; speedup 1.248x
+  original: max relative RMS gradient difference 0
+  original: 20 kernels per forward/backward iteration
+  cast: max relative RMS gradient difference 2.9480184e-06
+  cast: 18 kernels per forward/backward iteration
+  fused: max relative RMS gradient difference 4.2879151e-06
+  fused: 16 kernels per forward/backward iteration
+
+Sequence length 131072:
+  interleaved_forward_backward: original 20.4157 ms; cast 17.9565 ms; fused 17.3080 ms; latency reduction 15.22%; speedup 1.180x
+  interleaved_backward: original 15.8674 ms; cast 13.3432 ms; fused 12.6359 ms; latency reduction 20.37%; speedup 1.256x
+  original: max relative RMS gradient difference 0
+  original: 20 kernels per forward/backward iteration
+  cast: max relative RMS gradient difference 3.4157713e-06
+  cast: 18 kernels per forward/backward iteration
+  fused: max relative RMS gradient difference 4.3276509e-06
+  fused: 16 kernels per forward/backward iteration
+
+Only H100 performance was measured. This is operator-level, not whole-model timing.

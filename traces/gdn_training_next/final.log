@@ -1,0 +1,35 @@
+SEQLEN 16384
+check original 0.0 0.0001062491136130537
+check shared 0.0 4.846956019425986e-05
+check direct 0.0 0.0036655877317860832
+check direct_conv 0.007893314841379975 0.005200683699634244
+2026-10-14 10:34:09  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:357): Found kernel 'tilelang_prepare_h_kernel' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+check all_direct 0.007893314841379975 0.005200683699634244
+timing {'original': 12.420160293579102, 'shared': 12.211423873901367, 'direct': 11.575872421264648, 'direct_conv': 11.46895980834961, 'all_direct': 11.509440422058105}
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:14 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+SEQLEN 131072
+check original 0.0 1.986699653422372e-05
+check shared 0.0 2.1068395647200578e-05
+check direct 0.0 0.003665425112369767
+check direct_conv 0.013149287886986766 0.0064342521488395844
+check all_direct 0.013149287886986766 0.0064342521488395844
+timing {'original': 99.76905822753906, 'shared': 99.0788803100586, 'direct': 95.0321273803711, 'direct_conv': 95.59059143066406, 'all_direct': 95.35379028320312}
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:36 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:37 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:37 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-14 10:34:37 320071:320071 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-14 10:34:37 320071:320071 SyncActivityProfilerHandler.cpp:59] profiler_stop

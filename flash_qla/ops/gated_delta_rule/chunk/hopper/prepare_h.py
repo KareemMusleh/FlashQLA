@@ -34,11 +34,15 @@ def tilelang_prepare_h(
     is_cp,
     state_v_first,
     num_stages=2,
+    a_token_stride=None,
 ):
     batch_size = T.dynamic("batch_size")
     num_tokens = T.dynamic("num_tokens")
     num_chunks = T.dynamic("num_chunks")
     block_S = chunk_size
+    m_width = DK // 2 if is_cp else 1
+    a_token_stride = H * chunk_size if a_token_stride is None else a_token_stride
+    a_strides = (T.Cast("int64", num_tokens) * a_token_stride, T.int64(a_token_stride), chunk_size, 1)
 
     if is_varlen:
         k_shape = (1, num_tokens, Hg, DK)
@@ -78,7 +82,7 @@ def tilelang_prepare_h(
     def tilelang_prepare_h_kernel(
         k: T.Tensor(k_shape, dtype=qkva_dtype),
         v: T.Tensor(v_shape, dtype=qkva_dtype),
-        a: T.Tensor(a_shape, dtype=qkva_dtype),
+        a: T.StridedTensor(a_shape, a_strides, dtype=qkva_dtype),
         g: T.Tensor(g_shape, dtype=g_dtype),
         b: T.Tensor(b_shape, dtype=b_dtype),
         h0: T.Tensor(h0_shape, dtype=h0_dtype),
@@ -135,10 +139,10 @@ def tilelang_prepare_h(
             )
             x_shared = T.alloc_shared((block_S, DK), dtype=qkva_dtype)
             y_shared = T.alloc_shared((block_S, DV), dtype=qkva_dtype)
-            m_shared_L = T.alloc_shared((DK, DK // 2), dtype=qkva_dtype)
-            m_shared_R = T.alloc_shared((DK, DK // 2), dtype=qkva_dtype)
-            z_shared_L = T.alloc_shared((block_S, DK // 2), dtype=qkva_dtype)
-            z_shared_R = T.alloc_shared((block_S, DK // 2), dtype=qkva_dtype)
+            m_shared_L = T.alloc_shared((DK, m_width), dtype=qkva_dtype)
+            m_shared_R = T.alloc_shared((DK, m_width), dtype=qkva_dtype)
+            z_shared_L = T.alloc_shared((block_S, m_width), dtype=qkva_dtype)
+            z_shared_R = T.alloc_shared((block_S, m_width), dtype=qkva_dtype)
             g_rev_exp_shared = T.alloc_shared(
                 (block_S), dtype=accum_dtype, scope="shared"
             )
@@ -149,10 +153,10 @@ def tilelang_prepare_h(
             )
             x_fragment = T.alloc_fragment((block_S, DK), dtype=accum_dtype)
             y_fragment = T.alloc_fragment((block_S, DV), dtype=accum_dtype)
-            m_fragment_L = T.alloc_fragment((DK, DK // 2), dtype=accum_dtype)
-            m_fragment_R = T.alloc_fragment((DK, DK // 2), dtype=accum_dtype)
-            z_fragment_L = T.alloc_fragment((block_S, DK // 2), dtype=accum_dtype)
-            z_fragment_R = T.alloc_fragment((block_S, DK // 2), dtype=accum_dtype)
+            m_fragment_L = T.alloc_fragment((DK, m_width), dtype=accum_dtype)
+            m_fragment_R = T.alloc_fragment((DK, m_width), dtype=accum_dtype)
+            z_fragment_L = T.alloc_fragment((block_S, m_width), dtype=accum_dtype)
+            z_fragment_R = T.alloc_fragment((block_S, m_width), dtype=accum_dtype)
             g_last_local_S = T.alloc_local((1), dtype=accum_dtype)
             g_last_local_X = T.alloc_local((1), dtype=accum_dtype)
             g_last_local_Y = T.alloc_local((1), dtype=accum_dtype)
@@ -250,8 +254,8 @@ def tilelang_prepare_h(
             elif tx < 256:
                 T.set_max_nreg(CONSUMER_X_NREG, 1)
 
-                if calc_mt:
-                    for j_k, j_v in T.Parallel(DK, DK // 2):
+                if is_cp and calc_mt:
+                    for j_k, j_v in T.Parallel(DK, m_width):
                         if j_k == j_v + DK // 2:
                             m_fragment_R[j_k, j_v] = 1
                         else:
@@ -286,7 +290,7 @@ def tilelang_prepare_h(
                     T.fence_proxy_async()
                     T.barrier_arrive(bar_2)
 
-                    if calc_mt:
+                    if is_cp and calc_mt:
                         # [STAGE = i_s % num_stages] 2
                         g_prod_X[0] += g_shared[i_s % num_stages, block_S - 1]
                         # S4[2] M
@@ -316,20 +320,20 @@ def tilelang_prepare_h(
 
                     T.barrier_arrive(data_is_free[i_s % num_stages])
 
-                if calc_mt:
+                if is_cp and calc_mt:
                     g_last_local_X[0] = T.exp2(g_prod_X[0] * 1.442695)
-                    for j_k, j_v in T.Parallel(DK, DK // 2):
+                    for j_k, j_v in T.Parallel(DK, m_width):
                         m_fragment_R[j_k, j_v] *= g_last_local_X[0]
                     T.copy(m_fragment_R, mt[bb, bh, 0:DK, DK // 2 :])
-                else:
+                elif is_cp:
                     T.clear(m_fragment_R)
                     T.copy(m_fragment_R, mt[bb, bh, 0:DK, DK // 2 :])
 
             elif tx < 384:
                 T.set_max_nreg(CONSUMER_Y_NREG, 1)
 
-                if calc_mt:
-                    for j_k, j_v in T.Parallel(DK, DK // 2):
+                if is_cp and calc_mt:
+                    for j_k, j_v in T.Parallel(DK, m_width):
                         if j_k == j_v:
                             m_fragment_L[j_k, j_v] = 1
                         else:
@@ -386,7 +390,7 @@ def tilelang_prepare_h(
                     T.fence_proxy_async()
                     T.barrier_arrive(bar_2)
 
-                    if calc_mt:
+                    if is_cp and calc_mt:
                         # [STAGE = i_s % num_stages] 2
                         g_prod_Y[0] += g_shared[i_s % num_stages, block_S - 1]
                         # S4[2] M
@@ -416,12 +420,12 @@ def tilelang_prepare_h(
 
                     T.barrier_arrive(data_is_free[i_s % num_stages])
 
-                if calc_mt:
+                if is_cp and calc_mt:
                     g_last_local_Y[0] = T.exp2(g_prod_Y[0] * 1.442695)
-                    for j_k, j_v in T.Parallel(DK, DK // 2):
+                    for j_k, j_v in T.Parallel(DK, m_width):
                         m_fragment_L[j_k, j_v] *= g_last_local_Y[0]
                     T.copy(m_fragment_L, mt[bb, bh, 0:DK, : DK // 2])
-                else:
+                elif is_cp:
                     T.clear(m_fragment_L)
                     T.copy(m_fragment_L, mt[bb, bh, 0:DK, : DK // 2])
 
@@ -578,6 +582,7 @@ def fused_gdr_h(
     cu_seqlens: torch.LongTensor | None = None,
     num_warmup_chunks: torch.LongTensor | None = None,
     state_v_first: bool = False,
+    num_stages: int = 2,
 ):
     batch_size, num_tokens, Hg, K = k.shape
     _, _, H, V = v.shape
@@ -659,6 +664,8 @@ def fused_gdr_h(
         is_varlen=is_varlen,
         is_cp=is_cp,
         state_v_first=state_v_first,
+        num_stages=num_stages,
+        a_token_stride=a.stride(1),
     )
     tilelang_prepare_h_kernel(
         k,
@@ -675,6 +682,8 @@ def fused_gdr_h(
         final_correction,
     )
 
+    if output_final_state and not is_cp:
+        final_correction.zero_()
     if not output_final_state:
         final_state = None
         final_correction = None

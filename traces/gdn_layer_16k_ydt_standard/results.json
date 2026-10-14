@@ -1,0 +1,154 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 4096,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "norm_eps": 1e-05,
+    "dt_max": 0.1,
+    "partitions": 8,
+    "gdn_backend": "default",
+    "output": "traces/gdn_layer_16k_ydt_standard"
+  },
+  "scope": "complete GatedDeltaNet attention module forward; synthetic weights; one sequence; no cache/CP; full history; no residual or MLP",
+  "initialization": "unit-variance scaled linear and conv weights; YDT decay-bias formula with configurable dt upper bound; BF16 activations/weights, FP32 decay/beta",
+  "timing": "9 rotating-order CUDA graph samples; 30 replays per sample; stages use precomputed inputs; end-to-end recomputes all intermediates",
+  "correctness": {
+    "gdn_relative_rms": 0.0,
+    "layer_relative_rms": 0.0,
+    "finite": true,
+    "reference_finite": true,
+    "minimum_chunk_log_decay": -196.70263671875,
+    "convolution_relative_rms_vs_torch": [
+      0.0,
+      4.442388217285043e-06,
+      2.923828833445441e-05
+    ]
+  },
+  "references": {
+    "gdn.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/gdn.py",
+      "sha256": "bf9aeeb3c1fa8d1ccff95a9e33af60c80c9f526c153af5e85f7da5520a933b85"
+    },
+    "delta_rule.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/delta_rule.py",
+      "sha256": "d60a35a15da4b954e6b6f7c28a539dde80d5bee18b51e11793d2dfab043c472f"
+    }
+  },
+  "timings": {
+    "input_projections": {
+      "median_ms": 3.1810953776041666,
+      "samples_ms": [
+        3.1608917236328127,
+        3.2180447896321613,
+        3.1810953776041666,
+        3.2049705505371096,
+        3.195570119222005,
+        3.197881571451823,
+        3.1400937398274738,
+        3.1804789225260417,
+        3.1188011169433594
+      ]
+    },
+    "convolution_silu": {
+      "median_ms": 0.33882452646891276,
+      "samples_ms": [
+        0.33882452646891276,
+        0.302073605855306,
+        0.3818442662556966,
+        0.3197866757710775,
+        0.3359615961710612,
+        0.34941654205322265,
+        0.37282772064208985,
+        0.33471787770589195,
+        0.34408960342407224
+      ]
+    },
+    "decay_beta": {
+      "median_ms": 0.025896533330281576,
+      "samples_ms": [
+        0.024936532974243163,
+        0.022706133127212525,
+        0.02945599953333537,
+        0.02412160038948059,
+        0.026436267296473186,
+        0.02708266576131185,
+        0.02678826649983724,
+        0.025896533330281576,
+        0.0253546675046285
+      ]
+    },
+    "qk_normalization": {
+      "median_ms": 0.09863146940867105,
+      "samples_ms": [
+        0.09757440090179444,
+        0.09721173445383707,
+        0.10016746520996093,
+        0.09928639729817708,
+        0.09925119876861573,
+        0.09969066778818766,
+        0.09863146940867105,
+        0.09861013094584146,
+        0.09790933132171631
+      ]
+    },
+    "gdn_default": {
+      "median_ms": 0.9124501546223959,
+      "samples_ms": [
+        0.8814271926879883,
+        0.8219765345255534,
+        1.114471435546875,
+        0.9893791834513347,
+        0.8735968271891276,
+        0.9124501546223959,
+        0.9405034383138021,
+        0.9267829259236654,
+        0.9072266896565755
+      ]
+    },
+    "output_norm_gate": {
+      "median_ms": 0.8822378794352214,
+      "samples_ms": [
+        0.8346645355224609,
+        0.8373984018961589,
+        0.8871936162312826,
+        0.8850858688354493,
+        0.8451658884684244,
+        0.9108469645182292,
+        0.8822378794352214,
+        0.9096415837605795,
+        0.8396554946899414
+      ]
+    },
+    "output_projection": {
+      "median_ms": 1.0547903696695964,
+      "samples_ms": [
+        1.0415007909138998,
+        1.0484330495198568,
+        1.0802837371826173,
+        1.0636106491088868,
+        1.0497482935587565,
+        1.059499740600586,
+        1.0659701029459636,
+        1.0493120193481444,
+        1.0547903696695964
+      ]
+    },
+    "layer_default": {
+      "median_ms": 6.357695007324219,
+      "samples_ms": [
+        6.246387227376302,
+        6.322308349609375,
+        6.357695007324219,
+        6.371785481770833,
+        6.325558471679687,
+        6.480851236979166,
+        6.484600321451823,
+        6.351166788736979,
+        6.438844807942709
+      ]
+    }
+  }
+}

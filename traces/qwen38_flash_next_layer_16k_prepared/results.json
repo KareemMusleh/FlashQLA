@@ -1,0 +1,258 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "conv_backend": "dao",
+    "compare_conv_backends": false,
+    "norm_eps": 1e-06,
+    "norm_gate_mode": "fused",
+    "projection_mode": "packed",
+    "preparation_mode": "fused_gates",
+    "dt_max": 0.01,
+    "partitions": 8,
+    "gdn_backend": "optimized",
+    "output": "traces/qwen38_flash_next_layer_16k_prepared"
+  },
+  "shapes": {
+    "input": [
+      16384,
+      2560
+    ],
+    "input_projection_weights_q_k_v_z_a_b": [
+      [
+        2048,
+        2560
+      ],
+      [
+        2048,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        48,
+        2560
+      ],
+      [
+        48,
+        2560
+      ]
+    ],
+    "conv_weights_q_k_v": [
+      [
+        2048,
+        4
+      ],
+      [
+        2048,
+        4
+      ],
+      [
+        6144,
+        4
+      ]
+    ],
+    "q_k": [
+      1,
+      16384,
+      16,
+      128
+    ],
+    "v_output": [
+      1,
+      16384,
+      48,
+      128
+    ],
+    "g_beta": [
+      1,
+      16384,
+      48
+    ],
+    "output_projection_weight": [
+      2560,
+      6144
+    ]
+  },
+  "scope": "complete GatedDeltaNet attention module forward; synthetic weights; one sequence; no cache/CP; full history; no residual or MLP",
+  "initialization": "unit-variance scaled linear and conv weights; YDT decay-bias formula with configurable dt upper bound; BF16 activations/weights, FP32 decay/beta",
+  "timing": "9 rotating-order CUDA graph samples; 30 replays per sample; stages use precomputed inputs; end-to-end recomputes all intermediates",
+  "correctness": {
+    "gdn_relative_rms": 0.004472171422094107,
+    "layer_relative_rms": 0.005389695055782795,
+    "finite": true,
+    "reference_finite": true,
+    "minimum_chunk_log_decay": -23.976375579833984,
+    "preparation_qkv_relative_rms": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "preparation_gates_relative_rms": [
+      0.0,
+      0.0
+    ],
+    "convolution_relative_rms_vs_torch": [
+      6.365062290569767e-06,
+      7.886002890700183e-07,
+      7.880314115027431e-06
+    ]
+  },
+  "references": {
+    "gdn.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/gdn.py",
+      "sha256": "bf9aeeb3c1fa8d1ccff95a9e33af60c80c9f526c153af5e85f7da5520a933b85"
+    },
+    "delta_rule.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/delta_rule.py",
+      "sha256": "d60a35a15da4b954e6b6f7c28a539dde80d5bee18b51e11793d2dfab043c472f"
+    }
+  },
+  "convolution_implementations": {
+    "triton": "FLA Triton forward",
+    "cuda": "FLA wrapper around Dao causal-conv1d; includes sequence metadata preparation",
+    "dao": "Direct Dao causal-conv1d; one sequence, transposes are views, no sequence-id tensor needed"
+  },
+  "packages": {
+    "torch": "2.13.0+cu130",
+    "causal-conv1d": "1.7.0"
+  },
+  "timings": {
+    "input_projections": {
+      "median_ms": 1.8723925272623698,
+      "samples_ms": [
+        1.7802730560302735,
+        1.8643754323323567,
+        1.8456373850504557,
+        1.9057664235432943,
+        1.8644597371419271,
+        1.9649397532145183,
+        1.9140597025553385,
+        1.959386698404948,
+        1.8723925272623698
+      ]
+    },
+    "convolution_silu": {
+      "median_ms": 0.286297607421875,
+      "samples_ms": [
+        0.286297607421875,
+        0.2753504117329915,
+        0.28082027435302737,
+        0.288154665629069,
+        0.2825087865193685,
+        0.29433066050211587,
+        0.2841365178426107,
+        0.30082772572835287,
+        0.29536107381184895
+      ]
+    },
+    "decay_beta": {
+      "median_ms": 0.027253333727518717,
+      "samples_ms": [
+        0.02872320016225179,
+        0.024462932348251344,
+        0.0255295991897583,
+        0.027253333727518717,
+        0.026292266448338826,
+        0.0280949334303538,
+        0.02706666588783264,
+        0.029384533564249676,
+        0.02939520080884298
+      ]
+    },
+    "qk_normalization": {
+      "median_ms": 0.09835413297017416,
+      "samples_ms": [
+        0.09865279992421468,
+        0.09712213675181071,
+        0.09819093545277914,
+        0.09782293637593588,
+        0.0981216033299764,
+        0.09835413297017416,
+        0.09847573439280193,
+        0.09986773331960043,
+        0.09990399678548177
+      ]
+    },
+    "gdn_optimized": {
+      "median_ms": 0.7663210550944011,
+      "samples_ms": [
+        0.8032042821248372,
+        0.6729440053304037,
+        0.7560181299845378,
+        0.7663210550944011,
+        0.7928703943888347,
+        0.7594677607218424,
+        0.7515967686971029,
+        0.8121482849121093,
+        0.7986634572347006
+      ]
+    },
+    "output_norm_gate": {
+      "median_ms": 0.1994218667348226,
+      "samples_ms": [
+        0.1994218667348226,
+        0.19932907422383625,
+        0.19950186411539714,
+        0.19925653139750163,
+        0.19916906356811523,
+        0.19952319463094076,
+        0.1996330738067627,
+        0.1994069258371989,
+        0.19982825915018718
+      ]
+    },
+    "output_projection": {
+      "median_ms": 0.6567381540934245,
+      "samples_ms": [
+        0.6572042465209961,
+        0.6483722686767578,
+        0.6576416015625,
+        0.6662378946940104,
+        0.6567381540934245,
+        0.7187189102172852,
+        0.6525141398111979,
+        0.6548234939575195,
+        0.6543423970540364
+      ]
+    },
+    "layer_optimized": {
+      "median_ms": 3.90142822265625,
+      "samples_ms": [
+        3.800581359863281,
+        3.827576446533203,
+        3.8279434204101563,
+        4.3296147664388025,
+        3.9256245930989584,
+        3.9063382466634113,
+        3.8345972696940103,
+        3.9796427408854167,
+        3.90142822265625
+      ]
+    },
+    "preparation_fused_gates": {
+      "median_ms": 0.33278185526529946,
+      "samples_ms": [
+        0.32980801264444987,
+        0.33278185526529946,
+        0.32988481521606444,
+        0.33676160176595055,
+        0.33572587966918943,
+        0.34095681508382164,
+        0.3326176007588704,
+        0.3441258748372396,
+        0.3164767901102702
+      ]
+    }
+  }
+}

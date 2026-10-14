@@ -26,6 +26,7 @@ def tilelang_kkt_solve(
     b_dtype,
     seqlen_dtype,
     is_varlen,
+    a_token_stride=None,
 ):
     data_batch_size = T.dynamic("data_batch_size")
     real_batch_size = T.dynamic("real_batch_size")
@@ -35,6 +36,8 @@ def tilelang_kkt_solve(
 
     k_shape = (data_batch_size, num_tokens, Hg, DK)
     a_shape = (data_batch_size, num_tokens, H, chunk_size)
+    a_token_stride = H * chunk_size if a_token_stride is None else a_token_stride
+    a_strides = (T.Cast("int64", num_tokens) * a_token_stride, T.int64(a_token_stride), chunk_size, 1)
     b_shape = (data_batch_size, num_tokens, H)
 
     @T.macro
@@ -209,7 +212,7 @@ def tilelang_kkt_solve(
             b: T.Tensor(b_shape, dtype=b_dtype),
             cu_seqlens: T.Tensor([real_batch_size + 1], dtype=seqlen_dtype),
             chunk_indices: T.Tensor([num_chunks, 2], dtype=seqlen_dtype),
-            a: T.Tensor(a_shape, dtype=qkva_dtype),
+            a: T.StridedTensor(a_shape, a_strides, dtype=qkva_dtype),
         ):
             with T.Kernel(num_chunks * H, threads=128) as (bch,):
                 bc, bh = bch // H, bch % H
@@ -246,7 +249,7 @@ def tilelang_kkt_solve(
         def tilelang_kkt_solve_kernel(
             k: T.Tensor(k_shape, dtype=qkva_dtype),
             b: T.Tensor(b_shape, dtype=b_dtype),
-            a: T.Tensor(a_shape, dtype=qkva_dtype),
+            a: T.StridedTensor(a_shape, a_strides, dtype=qkva_dtype),
             num_chunks: T.int32,
         ):
             with T.Kernel(num_chunks * H, threads=128) as (bch,):
@@ -286,6 +289,7 @@ def kkt_solve(
     b: torch.Tensor,
     chunk_size: int = 64,
     cu_seqlens: Optional[torch.LongTensor] = None,
+    out: torch.Tensor | None = None,
 ):
     batch_size, num_tokens, Hg, K = k.shape
     _, _, H = b.shape
@@ -301,9 +305,13 @@ def kkt_solve(
         seqlen_dtype = cu_seqlens.dtype
         is_varlen = True
 
-    a = torch.empty(
+    a = out if out is not None else torch.empty(
         (batch_size, num_tokens, H, chunk_size), dtype=k.dtype, device=k.device
     )
+    if a.shape != (batch_size, num_tokens, H, chunk_size) or a.dtype != k.dtype or a.device != k.device:
+        raise ValueError("invalid inverse output buffer")
+    if a.stride(-1) != 1 or a.stride(2) != chunk_size or a.stride(1) < H * chunk_size:
+        raise ValueError("inverse output requires contiguous heads/columns and nonoverlapping tokens")
 
     tilelang_kkt_solve_kernel = tilelang_kkt_solve(
         H,
@@ -315,6 +323,7 @@ def kkt_solve(
         seqlen_dtype=seqlen_dtype,
         accum_dtype="float32",
         is_varlen=is_varlen,
+        a_token_stride=a.stride(1),
     )
     if is_varlen:
         tilelang_kkt_solve_kernel(k, b, cu_seqlens, chunk_indices, a)

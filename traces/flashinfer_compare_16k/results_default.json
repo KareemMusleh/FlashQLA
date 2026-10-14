@@ -1,0 +1,225 @@
+{
+  "flashinfer_commit": "50829ac2644704439260ac646067c0fc8c9bd0f5",
+  "flashinfer_path": "/tmp/flashinfer-gdn-compare/flashinfer/__init__.py",
+  "flashqla_commit": "da06429d54b0f577de0a638f451ac8f0b395e0ac",
+  "torch": "2.13.0+cu130",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "visible_devices": "1",
+  "shape": {
+    "batch": 1,
+    "tokens": 16384,
+    "key_heads": 16,
+    "value_heads": 48,
+    "head_dim": 128
+  },
+  "dtype": "BF16 QKV; FP32 gates",
+  "scope": "forward-only; no initial/final state; scale=128**-0.5",
+  "gate": "FlashQLA logsigmoid(N(0,1))/16; FlashInfer exp(log_gate), conversion outside timing",
+  "method": "CUDA graphs; nine rotating-order samples of 30 replays, warmed before capture",
+  "including_qk_norm": {
+    "flashqla_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.8037439982096354,
+      "samples_ms": [
+        0.791866683959961,
+        0.804317855834961,
+        0.7859530766805013,
+        0.8046400070190429,
+        0.8046709060668945,
+        0.8047690709431966,
+        0.8015978495279948,
+        0.8029674530029297,
+        0.8037439982096354
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "triton_per_fused__to_copy_add_mul_rsqrt_sum_0"
+      ]
+    },
+    "flashinfer_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0027166465297341347,
+        "max_abs": 0.0006103515625,
+        "finite": true
+      },
+      "median_ms": 0.7352949142456054,
+      "samples_ms": [
+        0.7215701421101888,
+        0.7357098897298177,
+        0.718333880106608,
+        0.7374346415201823,
+        0.736735979715983,
+        0.7364671707153321,
+        0.734342384338379,
+        0.7339850743611653,
+        0.7352949142456054
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "kernel_cutlass__kernel_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_128_16_8_4_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleFixupHmmaSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc151201_TVLayoutDst151201_Valuetypef32_tensor0000_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleMNPrecomputeSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRulePrefillSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst14096_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleTPrecomputeSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst1409601_Valuetypebf16_tenso_0"
+      ]
+    },
+    "flashqla_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.8298762639363607,
+      "samples_ms": [
+        0.8159349441528321,
+        0.8297856012980144,
+        0.8296810785929362,
+        0.830019187927246,
+        0.8302687962849935,
+        0.8298762639363607,
+        0.8297407786051433,
+        0.8314229329427083,
+        0.8300458908081054
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "triton_per_fused__to_copy_add_mul_rsqrt_sum_0"
+      ]
+    },
+    "flashinfer_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0026556949596852064,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.8128864288330078,
+      "samples_ms": [
+        0.8009994506835938,
+        0.8129301071166992,
+        0.79585386912028,
+        0.8128960291544597,
+        0.8131050745646159,
+        0.8128864288330078,
+        0.8086410522460937,
+        0.8123914718627929,
+        0.8128917058308919
+      ],
+      "kernels_per_iteration": 2,
+      "kernel_names": [
+        "kernel_cutlass__kernel_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_128_16_8_4_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_sm90_FullyFusedDeltaRuleSm90_object_at__tensorptrf32gmemalign16o1_tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSr_0"
+      ]
+    }
+  },
+  "prenormalized_qk": {
+    "flashqla_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.7086293538411458,
+      "samples_ms": [
+        0.7098826726277669,
+        0.7086293538411458,
+        0.6964213053385416,
+        0.7242090861002605,
+        0.7142997105916341,
+        0.7005856196085612,
+        0.7070613225301107,
+        0.7009898503621419,
+        0.7184714635213216
+      ],
+      "kernels_per_iteration": 3,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel"
+      ]
+    },
+    "flashinfer_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0027166465297341347,
+        "max_abs": 0.0006103515625,
+        "finite": true
+      },
+      "median_ms": 0.6356917063395182,
+      "samples_ms": [
+        0.6430805206298829,
+        0.6356917063395182,
+        0.6291605631510416,
+        0.6614165623982747,
+        0.6313237508138021,
+        0.648586654663086,
+        0.6292821248372396,
+        0.6317898432413737,
+        0.6486944198608399
+      ],
+      "kernels_per_iteration": 4,
+      "kernel_names": [
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleFixupHmmaSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc151201_TVLayoutDst151201_Valuetypef32_tensor0000_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleMNPrecomputeSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRulePrefillSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst14096_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleTPrecomputeSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst1409601_Valuetypebf16_tenso_0"
+      ]
+    },
+    "flashqla_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.7345962524414062,
+      "samples_ms": [
+        0.7345962524414062,
+        0.7332149505615234,
+        0.7209280014038086,
+        0.7400480270385742,
+        0.7265279769897461,
+        0.7421525319417318,
+        0.741810162862142,
+        0.7234783808390299,
+        0.7421695709228515
+      ],
+      "kernels_per_iteration": 3,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel"
+      ]
+    },
+    "flashinfer_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0026556949596852064,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.7177824020385742,
+      "samples_ms": [
+        0.7177557627360026,
+        0.7177824020385742,
+        0.7057482401529948,
+        0.7239370981852213,
+        0.7112063725789388,
+        0.7087349573771159,
+        0.725051752726237,
+        0.7199616114298503,
+        0.7247381210327148
+      ],
+      "kernels_per_iteration": 1,
+      "kernel_names": [
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_sm90_FullyFusedDeltaRuleSm90_object_at__tensorptrf32gmemalign16o1_tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSr_0"
+      ]
+    }
+  }
+}

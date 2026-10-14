@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /home/kareemm/forks/FlashQLA
+configfile: pytest.ini
+plugins: vh3-1.2.0, anyio-4.15.1, xdist-3.8.0, typeguard-4.6.0, jaxtyping-0.3.11
+collected 24 items
+
+tests/test_fast_gdn.py ..........                                        [ 41%]
+tests/test_prepare_mn.py ..............                                  [100%]
+
+=============================== warnings summary ===============================
+../../../../opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: 14 warnings
+  /opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 24 passed, 14 warnings in 20.97s =======================

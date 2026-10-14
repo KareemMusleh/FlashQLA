@@ -1,0 +1,102 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "causal_conv1d": "1.7.0",
+  "visible_devices": "0",
+  "scope": "Synthetic full YDT layer, single unpadded sequence, hidden2560 Hk16 Hv48 D128 conv4; BF16/FP32 gates; full-history optimized forward and default uncached GDR backward; dt_max=.01 fixture; no optimizer, distributed CP, state cache, or activation-stat logging.",
+  "method": "21 paired CUDA graph samples, alternating execution order, external per-variant events",
+  "memory_method": "Native allocator alloc/free_requested event history (requested bytes) for eager forward/backward; resident input/parameters/reference gradients excluded; event delta checked against live allocation counters allowing <2MiB CUDA allocator rounding; no dispatch mode",
+  "sources": {
+    "profile/bench_direct_gdn_training.py": "e3faf4306c94101beafde3aa372299a3894686e288118490c6d204921ae0d0e3",
+    "flash_qla/ops/gdn_layer.py": "12d6d83ecb6865cd44e41f68732f3941917799713875029c75fefc14706f9fe4",
+    "profile/bench_gdn_projection_training.py": "3586aa587b3f7ac11060feadd712d101a377b4fb985f3153de4fa701c1b006eb",
+    "flash_qla/ops/gated_delta_rule/chunk/__init__.py": "788d90f84cf43ca8038c337e18591d45117923ef158e05a68dd02045d5632675",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/kkt_solve.py": "bad2e476eb187bfbbf3abe8133022ee4deea2d48ada396f124f8d7d398972145"
+  },
+  "16384": {
+    "checks": {
+      "separate": {
+        "output_rms": 0.0,
+        "gradient_rms": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          7.556976409321626e-07,
+          2.7607444806847556e-09,
+          1.1044192414691129e-06,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 2583738368,
+        "whole_step_peak_increment_bytes": 2425356928,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 38,
+          "unique_activation_storage_bytes": 1779433856
+        }
+      },
+      "direct": {
+        "output_rms": 4.004577068989179e-05,
+        "gradient_rms": [
+          0.0038822663234368703,
+          0.000385543004723068,
+          0.002255789658726764,
+          0.0005359333232787951,
+          5.580457653918496e-05,
+          0.0006339485861700226,
+          0.0015176306119411105,
+          0.0004443324464889029,
+          0.001955695782590796,
+          0.0004132571396673747,
+          0.00011221774264923307,
+          0.00011259960307774682,
+          0.0024212539210877195,
+          5.728451184272058e-05
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 3066083328,
+        "whole_step_peak_increment_bytes": 2760900864,
+        "trace_delta_rounding_bytes": 896,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 1370488832
+        }
+      },
+      "direct_reuse": {
+        "output_rms": 4.004577068989179e-05,
+        "gradient_rms": [
+          0.0038822663234368703,
+          0.000385543004723068,
+          0.002255789658726764,
+          0.0005359333232787951,
+          5.580457653918496e-05,
+          0.0006339485861700226,
+          0.0015176306119411105,
+          0.0004443324464889029,
+          0.00195776909093999,
+          0.0004132586089205551,
+          0.00011221774264923307,
+          0.00011259960307774682,
+          0.0024212539210877195,
+          5.728451184272058e-05
+        ],
+        "finite": true,
+        "allocation_before_backward_bytes": 3066083328,
+        "whole_step_peak_increment_bytes": 2716385920,
+        "trace_delta_rounding_bytes": 1049472,
+        "saved": {
+          "saved_tensor_count": 28,
+          "unique_activation_storage_bytes": 1370488832
+        }
+      }
+    },
+    "timings": {}
+  }
+}

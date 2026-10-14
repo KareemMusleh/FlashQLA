@@ -1,0 +1,44 @@
+LAYER 131072
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+forward {'separate': 66.6862, 'packed': 73.7604, 'direct': 68.1537}
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:310.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[W1013 13:00:07.926144601 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 275054592, total: 85017886720).
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 177, in <module>
+    main()
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 170, in main
+    results[str(length)]=compare(layer,args.output.parent if args.trace else None)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 129, in compare
+    timings[scope] = paired_graphs({m: lambda m=m,fn=fn: fn(m) for m in modes})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 49, in paired_graphs
+    result = functions[name]()
+             ^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 129, in <lambda>
+    timings[scope] = paired_graphs({m: lambda m=m,fn=fn: fn(m) for m in modes})
+                                                         ^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 74, in step
+    return torch.autograd.grad(forward(mode), params, upstream)
+                               ^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 72, in forward
+    return layer.training_forward(mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_direct_gdn_training.py", line 22, in training_forward
+    return direct_gdn_layer(self.x, self.weights, self.conv_weights,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/flash_qla/ops/gdn_layer.py", line 233, in direct_gdn_layer
+    return _DirectGDN.apply(x, *weights, *conv_weights, a_log, dt_bias,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/autograd/function.py", line 625, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/flash_qla/ops/gdn_layer.py", line 131, in forward
+    gated = F.rms_norm(o, (128,), nw, eps) * F.silu(p[3].view_as(o))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/nn/functional.py", line 3006, in rms_norm
+    return torch.rms_norm(input, normalized_shape, weight, eps)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.50 GiB. GPU 0 has a total capacity of 79.18 GiB of which 262.31 MiB is free. Process 2565518 has 27.57 GiB memory in use. Process 2850825 has 51.33 GiB memory in use. Of the allocated memory 47.17 GiB is allocated by PyTorch, with 29.79 GiB allocated in private pools (e.g., CUDA Graphs), and 3.34 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)

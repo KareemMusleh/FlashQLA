@@ -1,0 +1,42 @@
+BENCH 16384
+[12:42:47] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[12:42:47] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[12:42:47] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[12:42:47] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+USDT:2026-10-13 12:43:13 150739:150739 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 12:43:13 150739:150739 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 12:43:13 150739:150739 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 12:43:13 150739:150739 SyncActivityProfilerHandler.cpp:59] profiler_stop
+2026-10-13 12:40:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_chunk_local_cumsum_kernel` with `out_idx=None`
+2026-10-13 12:40:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_chunk_local_cumsum_kernel`
+2026-10-13 12:40:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_kkt_solve_kernel` with `out_idx=None`
+2026-10-13 12:40:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_kkt_solve_kernel`
+2026-10-13 12:40:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_get_warmup_chunks_kernel` with `out_idx=None`
+2026-10-13 12:40:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_get_warmup_chunks_kernel`
+2026-10-13 12:40:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_prepare_h_kernel` with `out_idx=None`
+2026-10-13 12:41:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_prepare_h_kernel`
+2026-10-13 12:41:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_correct_h0_kernel` with `out_idx=None`
+2026-10-13 12:41:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_correct_h0_kernel`
+2026-10-13 12:41:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_fused_chunk_gdr_fwd_kernel` with `out_idx=None`
+2026-10-13 12:41:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_fused_chunk_gdr_fwd_kernel`
+2026-10-13 12:41:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_get_warmup_chunks_bidi_kernel` with `out_idx=None`
+2026-10-13 12:41:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_get_warmup_chunks_bidi_kernel`
+2026-10-13 12:41:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_prepare_dh_kernel` with `out_idx=None`
+2026-10-13 12:41:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_prepare_dh_kernel`
+2026-10-13 12:41:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_correct_h0_kernel` with `out_idx=None`
+2026-10-13 12:41:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_correct_h0_kernel`
+2026-10-13 12:42:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_prepare_h_kernel` with `out_idx=None`
+2026-10-13 12:42:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_prepare_h_kernel`
+2026-10-13 12:42:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel` with `out_idx=None`
+2026-10-13 12:43:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel`
+2026-10-13 12:43:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_chunk_local_cumsum_kernel` with `out_idx=None`
+2026-10-13 12:43:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_chunk_local_cumsum_kernel`
+{'torch_norm_gate': 14.631558227539063, 'fused_norm_gate': 13.324339294433594}
+BENCH 131072
+USDT:2026-10-13 12:43:30 150739:150739 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 12:43:30 150739:150739 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 12:43:30 150739:150739 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 12:43:30 150739:150739 SyncActivityProfilerHandler.cpp:59] profiler_stop
+{'torch_norm_gate': 119.1843032836914, 'fused_norm_gate': 108.32169342041016}

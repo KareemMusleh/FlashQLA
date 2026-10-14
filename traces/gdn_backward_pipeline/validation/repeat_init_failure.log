@@ -1,0 +1,26 @@
+/opt/ydt/lib/python3.12/site-packages/torch/cuda/__init__.py:188: UserWarning: CUDA initialization: CUDA driver initialization failed, you might not have a CUDA gpu. (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_gdn_full_layer_training.py", line 20, in <module>
+    from bench_fair_gdn_backward import reference, chunk, truncation
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 23, in <module>
+    from bench_implicit_bwd import interleaved, rms
+  File "/home/kareemm/forks/FlashQLA/profile/bench_implicit_bwd.py", line 15, in <module>
+    from flash_qla import chunk_gated_delta_rule
+  File "/home/kareemm/forks/FlashQLA/flash_qla/__init__.py", line 6, in <module>
+    from flash_qla.ops.gated_delta_rule.chunk import (
+  File "/home/kareemm/forks/FlashQLA/flash_qla/ops/__init__.py", line 4, in <module>
+    from .gated_delta_rule import chunk_gated_delta_rule
+  File "/home/kareemm/forks/FlashQLA/flash_qla/ops/gated_delta_rule/__init__.py", line 4, in <module>
+    from flash_qla.ops.gated_delta_rule.chunk import (
+  File "/home/kareemm/forks/FlashQLA/flash_qla/ops/gated_delta_rule/chunk/__init__.py", line 15, in <module>
+    if tilelang.contrib.nvcc.get_target_compute_version() == "9.0":
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in TVMFFIPyCallback(void*, TVMFFIAny const*, int, TVMFFIAny*)
+  File "<unknown>", line 0, in TVMFFIPyCallManager::ForwardPyErrorToFFI()
+  File "<unknown>", line 0, in TVMFFICyErrorSetRaisedFromPyError(_object*)
+  File "/opt/ydt/lib/python3.12/site-packages/tilelang/contrib/nvcc.py", line 493, in get_target_compute_version
+    raise ValueError(
+
+ValueError: No CUDA architecture was specified or GPU detected. Specify it with a target config such as {'kind': 'cuda', 'arch': 'sm_90'}.

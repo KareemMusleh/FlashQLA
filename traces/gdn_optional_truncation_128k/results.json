@@ -1,0 +1,98 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "shape": [
+    1,
+    131072,
+    16,
+    48,
+    128
+  ],
+  "scope": "forward; normalized Q/K; full history; no initial/final state",
+  "comparison_decay_threshold": null,
+  "optional_truncated_decay_threshold": 5e-05,
+  "timing": "9 rotating-order samples, 30 graph replays with 1 forwards per graph",
+  "partitions": {
+    "8": {
+      "correctness": {
+        "flashqla_full": {
+          "relative_rms": 0.00017868849681690335,
+          "finite": true
+        },
+        "optimized": {
+          "relative_rms": 0.004755307920277119,
+          "finite": true
+        },
+        "flashinfer": {
+          "relative_rms": 0.0027187159284949303,
+          "finite": true
+        },
+        "optimized_truncated": {
+          "relative_rms": 0.004755308385938406,
+          "finite": true
+        }
+      },
+      "flashqla_full": {
+        "median_ms": 7.336866251627604,
+        "samples_ms": [
+          7.201432291666666,
+          7.240391540527344,
+          7.313908386230469,
+          7.276352945963541,
+          7.405450439453125,
+          7.346098327636719,
+          7.368414815266927,
+          7.336866251627604,
+          7.4848683675130205
+        ]
+      },
+      "optimized": {
+        "median_ms": 4.622770182291666,
+        "samples_ms": [
+          4.532473754882813,
+          5.042771402994791,
+          4.6415456136067705,
+          4.7525278727213545,
+          4.612081909179688,
+          4.747174580891927,
+          4.518828837076823,
+          4.622770182291666,
+          4.55498046875
+        ]
+      },
+      "flashinfer": {
+        "median_ms": 4.606726582845052,
+        "samples_ms": [
+          4.492401123046875,
+          4.606726582845052,
+          4.511498514811198,
+          4.662243143717448,
+          4.623146565755208,
+          4.597584025065104,
+          4.517916870117188,
+          4.629703267415365,
+          4.632398986816407
+        ]
+      },
+      "optimized_truncated": {
+        "median_ms": 3.2539210001627605,
+        "samples_ms": [
+          3.1805333455403644,
+          3.25553716023763,
+          3.1753855387369794,
+          3.215135955810547,
+          3.2695093790690106,
+          3.330500284830729,
+          3.188066101074219,
+          3.257590484619141,
+          3.2539210001627605
+        ]
+      },
+      "truncation": {
+        "full_chunks_per_partition": 256,
+        "mean_retained_chunks": 3.7440476417541504,
+        "max_retained_chunks": 4.0,
+        "relative_rms_vs_optimized_full": 5.236313882051036e-05
+      }
+    }
+  }
+}

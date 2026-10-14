@@ -1,0 +1,346 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "conv_backend": "cuda",
+    "compare_conv_backends": true,
+    "norm_eps": 1e-06,
+    "dt_max": 0.01,
+    "partitions": 8,
+    "gdn_backend": "optimized",
+    "output": "traces/qwen38_flash_next_layer_16k_conv_compare"
+  },
+  "shapes": {
+    "input": [
+      16384,
+      2560
+    ],
+    "input_projection_weights_q_k_v_z_a_b": [
+      [
+        2048,
+        2560
+      ],
+      [
+        2048,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        48,
+        2560
+      ],
+      [
+        48,
+        2560
+      ]
+    ],
+    "conv_weights_q_k_v": [
+      [
+        2048,
+        4
+      ],
+      [
+        2048,
+        4
+      ],
+      [
+        6144,
+        4
+      ]
+    ],
+    "q_k": [
+      1,
+      16384,
+      16,
+      128
+    ],
+    "v_output": [
+      1,
+      16384,
+      48,
+      128
+    ],
+    "g_beta": [
+      1,
+      16384,
+      48
+    ],
+    "output_projection_weight": [
+      2560,
+      6144
+    ]
+  },
+  "scope": "complete GatedDeltaNet attention module forward; synthetic weights; one sequence; no cache/CP; full history; no residual or MLP",
+  "initialization": "unit-variance scaled linear and conv weights; YDT decay-bias formula with configurable dt upper bound; BF16 activations/weights, FP32 decay/beta",
+  "timing": "9 rotating-order CUDA graph samples; 30 replays per sample; stages use precomputed inputs; end-to-end recomputes all intermediates",
+  "correctness": {
+    "gdn_relative_rms": 0.004472171422094107,
+    "layer_relative_rms": 0.005389709956943989,
+    "finite": true,
+    "reference_finite": true,
+    "minimum_chunk_log_decay": -23.976375579833984,
+    "convolution_relative_rms_vs_torch": [
+      6.365062290569767e-06,
+      7.886002890700183e-07,
+      7.880314115027431e-06
+    ],
+    "convolution_backends_relative_rms": {
+      "triton": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cuda": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dao": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "layer_conv_backends_relative_rms": {
+      "triton": 0.005389709956943989,
+      "cuda": 0.005389709956943989,
+      "dao": 0.005389709956943989
+    }
+  },
+  "references": {
+    "gdn.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/gdn.py",
+      "sha256": "bf9aeeb3c1fa8d1ccff95a9e33af60c80c9f526c153af5e85f7da5520a933b85"
+    },
+    "delta_rule.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/delta_rule.py",
+      "sha256": "d60a35a15da4b954e6b6f7c28a539dde80d5bee18b51e11793d2dfab043c472f"
+    }
+  },
+  "convolution_implementations": {
+    "triton": "FLA Triton forward",
+    "cuda": "FLA wrapper around Dao causal-conv1d; includes sequence metadata preparation",
+    "dao": "Direct Dao causal-conv1d; one sequence, transposes are views, no sequence-id tensor needed"
+  },
+  "packages": {
+    "torch": "2.13.0+cu130",
+    "causal-conv1d": "1.7.0"
+  },
+  "timings": {
+    "input_projections": {
+      "median_ms": 2.0126548767089845,
+      "samples_ms": [
+        1.9315850575764975,
+        2.0036746978759767,
+        1.9945866902669271,
+        2.034358342488607,
+        2.0126548767089845,
+        2.036884307861328,
+        2.022051239013672,
+        2.0512884775797526,
+        2.0005215962727863
+      ]
+    },
+    "convolution_silu": {
+      "median_ms": 0.4287477175394694,
+      "samples_ms": [
+        0.4287477175394694,
+        0.41421438852945963,
+        0.43750934600830077,
+        0.41542399724324547,
+        0.4276042620340983,
+        0.4408373196919759,
+        0.43612054189046223,
+        0.44755519231160484,
+        0.4166762669881185
+      ]
+    },
+    "decay_beta": {
+      "median_ms": 0.025333333015441894,
+      "samples_ms": [
+        0.024909865856170655,
+        0.023795199394226075,
+        0.025357866287231447,
+        0.024488532543182374,
+        0.025821866591771443,
+        0.025358933210372924,
+        0.025333333015441894,
+        0.026255999008814493,
+        0.025037866830825806
+      ]
+    },
+    "qk_normalization": {
+      "median_ms": 0.09749120076497396,
+      "samples_ms": [
+        0.09742186864217123,
+        0.0969258705774943,
+        0.09743893146514893,
+        0.09706880251566569,
+        0.09753599961598715,
+        0.09749120076497396,
+        0.0975274642308553,
+        0.09802026748657226,
+        0.09792533715566
+      ]
+    },
+    "gdn_optimized": {
+      "median_ms": 0.7417834599812826,
+      "samples_ms": [
+        0.7319050470987956,
+        0.7102389017740885,
+        0.804149309794108,
+        0.7179253260294597,
+        0.7417834599812826,
+        0.8017920176188151,
+        0.8139904022216797,
+        0.8164522806803386,
+        0.7245983759562175
+      ]
+    },
+    "output_norm_gate": {
+      "median_ms": 0.8530805587768555,
+      "samples_ms": [
+        0.850602658589681,
+        0.8348565419514974,
+        0.8723082860310872,
+        0.8370880126953125,
+        0.8510784149169922,
+        0.9068864186604818,
+        0.8533664067586263,
+        0.8530805587768555,
+        0.8539967854817708
+      ]
+    },
+    "output_projection": {
+      "median_ms": 0.6452735900878906,
+      "samples_ms": [
+        0.6446666717529297,
+        0.6440149307250976,
+        0.6607423782348633,
+        0.6452735900878906,
+        0.6451904296875,
+        0.6497151692708333,
+        0.6556970596313476,
+        0.646832021077474,
+        0.6440426508585612
+      ]
+    },
+    "layer_optimized": {
+      "median_ms": 4.57867431640625,
+      "samples_ms": [
+        4.522342427571615,
+        4.57867431640625,
+        4.699828084309896,
+        4.641014607747396,
+        4.569559224446615,
+        4.719540405273437,
+        4.656709289550781,
+        4.488230387369792,
+        4.552724202473958
+      ]
+    },
+    "convolution_triton": {
+      "median_ms": 0.30081920623779296,
+      "samples_ms": [
+        0.29873278935750325,
+        0.3016341209411621,
+        0.3249770800272624,
+        0.3,
+        0.31294612884521483,
+        0.3143893241882324,
+        0.30081920623779296,
+        0.30035521189371744,
+        0.29981759389241536
+      ]
+    },
+    "layer_conv_triton": {
+      "median_ms": 4.553595479329427,
+      "samples_ms": [
+        4.443180847167969,
+        4.553595479329427,
+        4.650522867838542,
+        4.477764383951823,
+        4.527062479654948,
+        4.592250569661458,
+        4.566651916503906,
+        4.5777430216471355,
+        4.512358601888021
+      ]
+    },
+    "convolution_cuda": {
+      "median_ms": 0.38819840749104817,
+      "samples_ms": [
+        0.3846954663594564,
+        0.38669548034667967,
+        0.4018719991048177,
+        0.3881663958231608,
+        0.3880277315775553,
+        0.38819840749104817,
+        0.39334398905436196,
+        0.39422613779703775,
+        0.39654932022094724
+      ]
+    },
+    "layer_conv_cuda": {
+      "median_ms": 4.582822163899739,
+      "samples_ms": [
+        4.5059967041015625,
+        4.5137385050455725,
+        4.597013346354166,
+        4.627879333496094,
+        4.609751383463542,
+        4.582630411783854,
+        4.582202657063802,
+        4.582822163899739,
+        4.598938496907552
+      ]
+    },
+    "convolution_dao": {
+      "median_ms": 0.2593141396840413,
+      "samples_ms": [
+        0.25840959548950193,
+        0.2587146600087484,
+        0.2602421283721924,
+        0.260313606262207,
+        0.2593141396840413,
+        0.2592170715332031,
+        0.26076159477233884,
+        0.26146240234375,
+        0.2583306630452474
+      ]
+    },
+    "layer_conv_dao": {
+      "median_ms": 4.504703776041667,
+      "samples_ms": [
+        4.7354380289713545,
+        4.419181823730469,
+        4.524005126953125,
+        4.5538782755533855,
+        4.477448527018229,
+        4.504703776041667,
+        4.532364908854166,
+        4.4917449951171875,
+        4.501099650065104
+      ]
+    }
+  },
+  "profile_kernel_counts": {
+    "gdn_layer_optimized": 29,
+    "gdn_layer_conv_triton": 26,
+    "gdn_layer_conv_cuda": 29,
+    "gdn_layer_conv_dao": 26
+  },
+  "cuda_wrapper_difference": "FLA CUDA forwards sequence IDs; direct Dao omits them for one sequence. In this trace FLA adds three conversion kernels, and its convolution kernels also run longer.",
+  "profile_kernel_count_method": "CUDA runtime/driver launch correlation IDs grouped by enclosing CPU variant region"
+}

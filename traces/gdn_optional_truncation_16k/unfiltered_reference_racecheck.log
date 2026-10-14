@@ -1,0 +1,103 @@
+========= COMPUTE-SANITIZER
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /home/kareemm/forks/FlashQLA
+configfile: pytest.ini
+plugins: vh3-1.2.0, anyio-4.15.1, xdist-3.8.0, typeguard-4.6.0, jaxtyping-0.3.11
+collected 3 items
+
+tests/test_prepare_mn.py ========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6940 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x69a0 in tvm_kernels.cu:193 [5376 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6710 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6770 in tvm_kernels.cu:193 [4992 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6500 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6550 in tvm_kernels.cu:193 [4608 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6320 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6370 in tvm_kernels.cu:193 [4224 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x61a0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x61b0 in tvm_kernels.cu:193 [3840 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5ff0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6000 in tvm_kernels.cu:193 [3456 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5e60 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5e70 in tvm_kernels.cu:193 [3072 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5d00 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5d10 in tvm_kernels.cu:193 [2688 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5bc0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5bd0 in tvm_kernels.cu:193 [2304 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5aa0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5ab0 in tvm_kernels.cu:193 [1920 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x59a0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x59b0 in tvm_kernels.cu:193 [1536 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x58d0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x58e0 in tvm_kernels.cu:193 [1152 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5820 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5830 in tvm_kernels.cu:193 [768 hazards]
+========= 
+========= Error: Race reported between Write access at tilelang_kkt_solve_kernel_kernel+0x5770 in tvm_kernels.cu:193
+=========     and Read access at tilelang_kkt_solve_kernel_kernel+0x57c0 in tvm_kernels.cu:188 [384 hazards]
+========= 
+.========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6940 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x69a0 in tvm_kernels.cu:193 [5376 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6710 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6770 in tvm_kernels.cu:193 [4992 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6500 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6550 in tvm_kernels.cu:193 [4608 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x6320 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6370 in tvm_kernels.cu:193 [4224 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x61a0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x61b0 in tvm_kernels.cu:193 [3840 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5ff0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x6000 in tvm_kernels.cu:193 [3456 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5e60 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5e70 in tvm_kernels.cu:193 [3072 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5d00 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5d10 in tvm_kernels.cu:193 [2688 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5bc0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5bd0 in tvm_kernels.cu:193 [2304 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5aa0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5ab0 in tvm_kernels.cu:193 [1920 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x59a0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x59b0 in tvm_kernels.cu:193 [1536 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x58d0 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x58e0 in tvm_kernels.cu:193 [1152 hazards]
+========= 
+========= Error: Race reported between Read access at tilelang_kkt_solve_kernel_kernel+0x5820 in tvm_kernels.cu:188
+=========     and Write access at tilelang_kkt_solve_kernel_kernel+0x5830 in tvm_kernels.cu:193 [768 hazards]
+========= 
+========= Error: Race reported between Write access at tilelang_kkt_solve_kernel_kernel+0x5770 in tvm_kernels.cu:193
+=========     and Read access at tilelang_kkt_solve_kernel_kernel+0x57c0 in tvm_kernels.cu:188 [384 hazards]
+========= 
+.                                              [ 66%]
+tests/test_fast_gdn.py .                                                 [100%]
+
+=============================== warnings summary ===============================
+../../../../opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: 14 warnings
+  /opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 3 passed, 14 warnings in 119.78s (0:01:59) ==================
+========= RACECHECK SUMMARY: 28 hazards displayed (28 errors, 0 warnings)

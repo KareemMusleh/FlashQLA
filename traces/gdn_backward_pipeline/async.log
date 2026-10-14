@@ -1,0 +1,37 @@
+BENCH 16384 0.001
+[11:46:29] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[11:46:29] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[11:46:29] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+[11:46:29] : Warning: T.vectorized loop over `j_t_vec` with extent 2 is lowered as a serial loop because TileLang could not find a valid vectorization plan. Scalar accumulator updates inside the loop are a common cause; move reductions to T.unroll or T.serial if this is intended.
+2026-10-13 11:45:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel` with `out_idx=None`
+2026-10-13 11:46:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_fused_chunk_gdr_bwd_kernel`
+16384 0.001 cached {'flashqla_committed': 5.0808, 'optimized_postprocessing': 4.2756}
+BENCH 131072 0.001
+[W1013 11:46:51.028601821 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 3221225472 bytes (free: 1699479552, total: 85017886720).
+[W1013 11:46:51.043094131 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 1162608640, total: 85017886720).
+[W1013 11:46:51.043240576 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 1162608640, total: 85017886720).
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 274, in <module>
+    main()
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 266, in main
+    results[f"{length}_decay{decay}"] = benchmark(
+                                        ^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 171, in benchmark
+    expected = functions["flashqla_committed"]()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 163, in <lambda>
+    "flashqla_committed": lambda kwargs=kwargs: baseline(**kwargs),
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 62, in backward
+    dq, dk, dv, db, dg, dh = driver(**kwargs)
+                             ^^^^^^^^^^^^^^^^
+  File "traces/gdn_backward_pipeline/async/reference_driver.py", line 171, in chunk_gated_delta_rule_bwd
+    dq, dk, dv, dg, db, dh0 = fused_gdr_bwd(
+                              ^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/traces/gdn_backward_pipeline/async/reference_main.py", line 1173, in fused_gdr_bwd
+    dq = torch.empty_like(v)
+         ^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.50 GiB. GPU 0 has a total capacity of 79.18 GiB of which 1.08 GiB is free. Process 1864195 has 69.47 GiB memory in use. Process 2288599 has 8.69 GiB memory in use. Of the allocated memory 7.87 GiB is allocated by PyTorch, and 153.97 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)

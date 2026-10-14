@@ -1,0 +1,63 @@
+WARMUP including_qk_norm flashqla_full_p2
+2026-10-09 12:12:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `tilelang_get_warmup_chunks_kernel` with `out_idx=None`
+2026-10-09 12:12:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `tilelang_get_warmup_chunks_kernel`
+CHECK {'relative_rms': 0.00019240220717620105, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP including_qk_norm flashinfer_p2
+CHECK {'relative_rms': 0.0027166465297341347, 'max_abs': 0.0006103515625, 'finite': True}
+WARMUP including_qk_norm flashqla_truncated_p2
+CHECK {'relative_rms': 0.00019252696074545383, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP including_qk_norm flashqla_full_p8
+CHECK {'relative_rms': 0.0005123312585055828, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP including_qk_norm flashinfer_p8
+CHECK {'relative_rms': 0.0027195110451430082, 'max_abs': 0.0006103515625, 'finite': True}
+WARMUP including_qk_norm flashqla_truncated_p8
+CHECK {'relative_rms': 0.0005123166483826935, 'max_abs': 0.00048828125, 'finite': True}
+RESULT including_qk_norm flashqla_full_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.00019240220717620105, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 1.3112159729003907, 'samples_ms': [1.302225112915039, 1.3089664459228516, 1.3126847585042318, 1.3096309661865235, 1.340953572591146, 1.3112159729003907, 1.3119925181070964, 1.3182229359944662, 1.30928955078125]}
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT including_qk_norm flashinfer_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0027166465297341347, 'max_abs': 0.0006103515625, 'finite': True}, 'median_ms': 0.7385781606038412, 'samples_ms': [0.7346453348795573, 0.7407871882120768, 0.7385290781656901, 0.7385781606038412, 0.73930238087972, 0.7417685190836588, 0.7384373346964518, 0.738811747233073, 0.7372117360432943]}
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT including_qk_norm flashqla_truncated_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.00019252696074545383, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 0.7789642969767253, 'samples_ms': [0.7740608215332031, 0.7946816126505534, 0.7777706782023112, 0.7792917251586914, 0.7789440155029297, 0.7863669077555339, 0.7805845260620117, 0.7788735707600911, 0.7789642969767253]}
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT including_qk_norm flashqla_full_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0005123312585055828, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 1.113418706258138, 'samples_ms': [1.1069098154703776, 1.1425450642903645, 1.1131540934244792, 1.1000053405761718, 1.113418706258138, 1.1400459289550782, 1.1165162404378255, 1.1139658610026042, 1.1109877268473307]}
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT including_qk_norm flashinfer_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0027195110451430082, 'max_abs': 0.0006103515625, 'finite': True}, 'median_ms': 0.7260810852050781, 'samples_ms': [0.7241727828979492, 0.72608642578125, 0.7264234542846679, 0.7248693466186523, 0.7234901428222656, 0.7260810852050781, 0.7280629475911459, 0.7273567835489909, 0.7258080164591472]}
+USDT:2026-10-09 12:12:32 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:33 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT including_qk_norm flashqla_truncated_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0005123166483826935, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 0.69944642384847, 'samples_ms': [0.696443748474121, 0.69944642384847, 0.6999519983927409, 0.6982997258504232, 0.7205322901407878, 0.6977813084920247, 0.7082592010498047, 0.7018698374430339, 0.6978303909301757]}
+USDT:2026-10-09 12:12:33 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:33 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+WARMUP prenormalized_qk flashqla_full_p2
+CHECK {'relative_rms': 0.00019240220717620105, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP prenormalized_qk flashinfer_p2
+CHECK {'relative_rms': 0.0027166465297341347, 'max_abs': 0.0006103515625, 'finite': True}
+WARMUP prenormalized_qk flashqla_truncated_p2
+CHECK {'relative_rms': 0.00019252696074545383, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP prenormalized_qk flashqla_full_p8
+CHECK {'relative_rms': 0.0005123312585055828, 'max_abs': 0.00048828125, 'finite': True}
+WARMUP prenormalized_qk flashinfer_p8
+CHECK {'relative_rms': 0.0027195110451430082, 'max_abs': 0.0006103515625, 'finite': True}
+WARMUP prenormalized_qk flashqla_truncated_p8
+CHECK {'relative_rms': 0.0005123166483826935, 'max_abs': 0.00048828125, 'finite': True}
+RESULT prenormalized_qk flashqla_full_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.00019240220717620105, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 1.2491456349690755, 'samples_ms': [1.2073983510335287, 1.2545653025309245, 1.2615029652913412, 1.2231615702311198, 1.2592564900716146, 1.2293844858805338, 1.2211530049641928, 1.2570901234944662, 1.2491456349690755]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT prenormalized_qk flashinfer_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0027166465297341347, 'max_abs': 0.0006103515625, 'finite': True}, 'median_ms': 0.6493024190266927, 'samples_ms': [0.6418805440266927, 0.6552042643229167, 0.6564629236857097, 0.6494805018107096, 0.6589173634847005, 0.6490048090616862, 0.6473130544026693, 0.6493024190266927, 0.6469823837280273]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT prenormalized_qk flashqla_truncated_p2 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.00019252696074545383, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 0.6902389526367188, 'samples_ms': [0.6798624038696289, 0.701641591389974, 0.6892608006795248, 0.6932320276896159, 0.6904949188232422, 0.6902389526367188, 0.6871295928955078, 0.6943370819091796, 0.6890368143717448]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT prenormalized_qk flashqla_full_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0005123312585055828, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 1.0229130427042643, 'samples_ms': [1.0109045028686523, 1.0482208251953125, 1.022989845275879, 1.0216586430867514, 1.0214378356933593, 1.0428234736124675, 1.0202229181925455, 1.0322869618733723, 1.0229130427042643]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT prenormalized_qk flashinfer_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0027195110451430082, 'max_abs': 0.0006103515625, 'finite': True}, 'median_ms': 0.6367637634277343, 'samples_ms': [0.6333599726359049, 0.637118911743164, 0.6368490854899088, 0.6364128112792968, 0.6367637634277343, 0.6378175735473632, 0.6360095977783203, 0.6378730773925781, 0.6359242757161458]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+RESULT prenormalized_qk flashqla_truncated_p8 {'correctness_vs_flashqla_no_cp': {'relative_rms': 0.0005123166483826935, 'max_abs': 0.00048828125, 'finite': True}, 'median_ms': 0.6159445444742838, 'samples_ms': [0.6293024063110352, 0.610640017191569, 0.6147797266642253, 0.607864507039388, 0.6299402872721355, 0.607861328125, 0.6293290456136068, 0.6159445444742838, 0.6186304092407227]}
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-09 12:12:34 2072870:2072870 SyncActivityProfilerHandler.cpp:59] profiler_stop
+DONE

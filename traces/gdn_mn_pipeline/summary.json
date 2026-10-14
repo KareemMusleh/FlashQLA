@@ -1,0 +1,93 @@
+{
+  "production_kernel_changed": false,
+  "selected_partitions": {
+    "16384": 8,
+    "131072": 8
+  },
+  "fixture": [
+    1,
+    16,
+    48,
+    128
+  ],
+  "scope": "Full history. Frozen output and M/N copies isolate the sweep from concurrent workspace edits. FlashInfer comparison omitted because the installed version lacks the matched-partition argument.",
+  "partition_sweep": {
+    "16k": {
+      "4": 0.6503462219238281,
+      "8": 0.5983683268229166,
+      "16": 0.6514697774251302,
+      "32": 0.739786122639974
+    },
+    "128k": {
+      "4": 4.992576090494792,
+      "8": 4.460155741373698,
+      "16": 4.523143513997396,
+      "32": 4.596808369954427
+    }
+  },
+  "mn_trials": {
+    "16k": {
+      "8": {
+        "baseline": 0.19530923207600911,
+        "s2_overlap0": 0.20350549062093098,
+        "s2_overlap1": 0.3418013763427734,
+        "s3_overlap0": 0.19815359751383463,
+        "s3_overlap1": 0.3379893239339193
+      }
+    },
+    "128k": {
+      "8": {
+        "baseline": 1.505309804280599,
+        "s2_overlap0": 1.595749282836914,
+        "s2_overlap1": 2.6842389424641926,
+        "s3_overlap0": 1.5095221201578777,
+        "s3_overlap1": 2.6985577901204425
+      }
+    },
+    "aux16k": {
+      "8": {
+        "baseline": 0.19568682352701822,
+        "s2_overlap0": 0.30204671223958335,
+        "s2_overlap1": 0.2908061981201172,
+        "s3_overlap0": 0.28809898376464843,
+        "s3_overlap1": 0.28439979553222655
+      }
+    },
+    "aux_small16k": {
+      "8": {
+        "baseline": 0.19450431823730469,
+        "s2_overlap0": 0.7242156982421875,
+        "s2_overlap1": 0.7145188395182291,
+        "s3_overlap0": 0.7420349629720052,
+        "s3_overlap1": 0.7417979939778646
+      }
+    },
+    "update_overlap16k": {
+      "8": {
+        "baseline": 0.2067526372273763,
+        "s2_overlap0": 0.21103871663411458,
+        "s2_overlap1": 0.21097237904866536,
+        "s3_overlap0": 0.20998123168945312,
+        "s3_overlap1": 0.20991680145263672
+      }
+    },
+    "update_overlap128k": {
+      "8": {
+        "baseline": 1.601895523071289,
+        "s2_overlap0": 1.6282868703206381,
+        "s2_overlap1": 1.5979840596516928,
+        "s3_overlap0": 1.6210965474446615,
+        "s3_overlap1": 1.5944234212239583
+      }
+    }
+  },
+  "trial_label_notes": "aux variants always use auxiliary math (overlap flag ignored). update_overlap variants all use the same fixed two-stage schedule (both knobs ignored); repeated labels are repeats, not different schedules.",
+  "candidate_sha256": {
+    "pipeline_baseline.py": "640f4d754598214e49ee2fea4ce2133bee24ac6c162ac59b303ee56a030b6588",
+    "aux_experiment.py": "9c56b08e7eaa67ca1c7085e8b56f8da99f6db2bed9f977823cc147a7c1a4f104",
+    "pipeline_experiment.py": "0c76e35f6f21624f7e5ddd8e82e9ae3fe45b65c7be2c3c7966b2074f993412dd",
+    "aux_small.py": "e014830eef6a12faef3cdab39814cb0c506979b51ddfc24f2639168325e1f11d",
+    "update_overlap.py": "207ca98865af5b5d3a0f629ed1fe83b216caf93e77c88226cefe8cc477463601",
+    "output_baseline.py": "5a9064045efc0e319eaf7482def3e40ca0193fce56a32d8a397000cf4f5b18f4"
+  }
+}

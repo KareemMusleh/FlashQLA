@@ -1,0 +1,23 @@
+{
+  "tests_passed": 7,
+  "independent_fp64_cases": 5,
+  "training_driver_cases": 2,
+  "racecheck_kernel_filter": "kne=kernel_kernel",
+  "racecheck_cases": 5,
+  "racecheck_errors": 0,
+  "compiled_shape": [
+    1,
+    16384,
+    16,
+    48,
+    128
+  ],
+  "compiled_resources": {
+    "registers": 255,
+    "stack_bytes": 0,
+    "spill_store_bytes": 0,
+    "spill_load_bytes": 0
+  },
+  "source_sha256": "cdf5a6194d5396e8b1f49b806eaea3e52715a6e653568b47eb91710cd8a83869",
+  "legacy_reference_note": "Substring-filtered full-suite racecheck reports 56 legacy kkt_solve hazards; none named exactly kernel_kernel. Exact-name checks isolate the experimental kernels."
+}

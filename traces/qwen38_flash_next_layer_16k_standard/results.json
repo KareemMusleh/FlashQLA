@@ -1,0 +1,228 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "norm_eps": 1e-06,
+    "dt_max": 0.1,
+    "partitions": 8,
+    "gdn_backend": "default",
+    "output": "traces/qwen38_flash_next_layer_16k_standard"
+  },
+  "shapes": {
+    "input": [
+      16384,
+      2560
+    ],
+    "input_projection_weights_q_k_v_z_a_b": [
+      [
+        2048,
+        2560
+      ],
+      [
+        2048,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        6144,
+        2560
+      ],
+      [
+        48,
+        2560
+      ],
+      [
+        48,
+        2560
+      ]
+    ],
+    "conv_weights_q_k_v": [
+      [
+        2048,
+        4
+      ],
+      [
+        2048,
+        4
+      ],
+      [
+        6144,
+        4
+      ]
+    ],
+    "q_k": [
+      1,
+      16384,
+      16,
+      128
+    ],
+    "v_output": [
+      1,
+      16384,
+      48,
+      128
+    ],
+    "g_beta": [
+      1,
+      16384,
+      48
+    ],
+    "output_projection_weight": [
+      2560,
+      6144
+    ]
+  },
+  "scope": "complete GatedDeltaNet attention module forward; synthetic weights; one sequence; no cache/CP; full history; no residual or MLP",
+  "initialization": "unit-variance scaled linear and conv weights; YDT decay-bias formula with configurable dt upper bound; BF16 activations/weights, FP32 decay/beta",
+  "timing": "9 rotating-order CUDA graph samples; 30 replays per sample; stages use precomputed inputs; end-to-end recomputes all intermediates",
+  "correctness": {
+    "gdn_relative_rms": 0.0,
+    "layer_relative_rms": 0.0,
+    "finite": true,
+    "reference_finite": true,
+    "minimum_chunk_log_decay": -166.55490112304688,
+    "convolution_relative_rms_vs_torch": [
+      6.365062290569767e-06,
+      7.886002890700183e-07,
+      7.880314115027431e-06
+    ]
+  },
+  "references": {
+    "gdn.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/gdn.py",
+      "sha256": "bf9aeeb3c1fa8d1ccff95a9e33af60c80c9f526c153af5e85f7da5520a933b85"
+    },
+    "delta_rule.py": {
+      "path": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/nn/modules/attention/delta_rule.py",
+      "sha256": "d60a35a15da4b954e6b6f7c28a539dde80d5bee18b51e11793d2dfab043c472f"
+    }
+  },
+  "timings": {
+    "input_projections": {
+      "median_ms": 1.961471939086914,
+      "samples_ms": [
+        1.8664180755615234,
+        1.961471939086914,
+        2.0872586568196616,
+        1.9603808085123697,
+        1.9543253580729167,
+        1.8679541269938151,
+        2.0035850524902346,
+        1.969497553507487,
+        1.9835946400960287
+      ]
+    },
+    "convolution_silu": {
+      "median_ms": 0.33583253224690757,
+      "samples_ms": [
+        0.33583253224690757,
+        0.30253547032674155,
+        0.36441386540730797,
+        0.3350048065185547,
+        0.33492692311604816,
+        0.30736532211303713,
+        0.33795948028564454,
+        0.3410688082377116,
+        0.33817599614461263
+      ]
+    },
+    "decay_beta": {
+      "median_ms": 0.024679466088612875,
+      "samples_ms": [
+        0.024937599897384644,
+        0.022613332668940226,
+        0.024574933449427287,
+        0.024679466088612875,
+        0.024258132775624594,
+        0.023209599653879802,
+        0.025175466140111288,
+        0.02537386616071065,
+        0.024909865856170655
+      ]
+    },
+    "qk_normalization": {
+      "median_ms": 0.09838720162709554,
+      "samples_ms": [
+        0.09841386477152507,
+        0.09791573683420816,
+        0.09803733030954996,
+        0.09942826430002848,
+        0.0983125368754069,
+        0.09855999946594238,
+        0.09838720162709554,
+        0.09852586587270101,
+        0.09836373329162598
+      ]
+    },
+    "gdn_default": {
+      "median_ms": 0.9176991780598959,
+      "samples_ms": [
+        0.9080928166707357,
+        0.7957877477010091,
+        0.9030506769816081,
+        0.968287976582845,
+        0.9176991780598959,
+        0.9666890462239583,
+        0.9514399846394856,
+        0.9048693339029948,
+        0.9355306625366211
+      ]
+    },
+    "output_norm_gate": {
+      "median_ms": 0.8558293024698893,
+      "samples_ms": [
+        0.8884757359822592,
+        0.8326954523722331,
+        0.8554186503092448,
+        0.8518229166666667,
+        0.8558293024698893,
+        0.8929354349772135,
+        0.8749962488810221,
+        0.8423765182495118,
+        0.8680789311726888
+      ]
+    },
+    "output_projection": {
+      "median_ms": 0.6454069137573242,
+      "samples_ms": [
+        0.6443637212117513,
+        0.6442815780639648,
+        0.6437599817911784,
+        0.6440575917561849,
+        0.6454069137573242,
+        0.6527029037475586,
+        0.7565173467000326,
+        0.6482880274454753,
+        0.6599103927612304
+      ]
+    },
+    "layer_default": {
+      "median_ms": 4.648120625813802,
+      "samples_ms": [
+        4.5352940877278645,
+        4.6181396484375,
+        4.638793436686198,
+        4.648120625813802,
+        4.661958312988281,
+        4.680370076497396,
+        4.753461201985677,
+        4.533210754394531,
+        4.756439717610677
+      ]
+    }
+  },
+  "shape_provenance": {
+    "model": "Qwen3.8-Flash-Next",
+    "projection_shapes_source": "/home/kareemm/arcadia/ml/torch/ydt/qwen38_ydt_gdn_16k_flash_qla_trace.json",
+    "projection_shapes_source_sha256": "c562992a734ead8596e9b833e123f63ea1f562ffc5128273c895ae97d0000a33",
+    "layer_reference": "/tmp/gdn-study/gdn_fused_stable_20261012/gdn_reference.py",
+    "layer_reference_sha256": "e0d524c6c965d7ccdf45fcb34095d548e0b74fad892fd06c982b2703fbb1c07a"
+  }
+}

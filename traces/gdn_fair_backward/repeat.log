@@ -1,0 +1,40 @@
+BENCH 16384 0.001
+USDT:2026-10-13 10:59:38 3516194:3516194 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:59:38 3516194:3516194 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:59:38 3516194:3516194 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:59:38 3516194:3516194 SyncActivityProfilerHandler.cpp:59] profiler_stop
+2026-10-13 10:59:36  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:357): Found kernel 'tilelang_fused_chunk_gdr_bwd_kernel' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+16384 0.001 cached {'flashqla_committed': 2.2671, 'optimized_postprocessing': 1.9911}
+USDT:2026-10-13 10:59:39 3516194:3516194 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:59:39 3516194:3516194 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 10:59:39 3516194:3516194 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 10:59:39 3516194:3516194 SyncActivityProfilerHandler.cpp:59] profiler_stop
+16384 0.001 recomputed {'flashqla_committed': 2.7769, 'optimized_postprocessing': 2.5012}
+BENCH 131072 0.001
+[W1013 10:59:39.842669935 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 820903936, total: 85017886720).
+[W1013 10:59:39.842826370 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1610612736 bytes (free: 820903936, total: 85017886720).
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 274, in <module>
+    main()
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 266, in main
+    results[f"{length}_decay{decay}"] = benchmark(
+                                        ^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 174, in benchmark
+    actual = fn()
+             ^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 163, in <lambda>
+    "flashqla_committed": lambda kwargs=kwargs: baseline(**kwargs),
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 62, in backward
+    dq, dk, dv, db, dg, dh = driver(**kwargs)
+                             ^^^^^^^^^^^^^^^^
+  File "traces/gdn_fair_backward/repeat/reference_driver.py", line 171, in chunk_gated_delta_rule_bwd
+    dq, dk, dv, dg, db, dh0 = fused_gdr_bwd(
+                              ^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/traces/gdn_fair_backward/repeat/reference_main.py", line 1175, in fused_gdr_bwd
+    dv = torch.empty_like(v)
+         ^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.50 GiB. GPU 0 has a total capacity of 79.18 GiB of which 782.88 MiB is free. Process 3523705 has 62.70 GiB memory in use. Process 3540250 has 15.70 GiB memory in use. Of the allocated memory 13.42 GiB is allocated by PyTorch, and 1.60 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)

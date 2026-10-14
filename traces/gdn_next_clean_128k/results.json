@@ -1,0 +1,75 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "shape": [
+    1,
+    131072,
+    16,
+    48,
+    128
+  ],
+  "scope": "forward; normalized Q/K; full history; no initial/final state",
+  "comparison_decay_threshold": null,
+  "optional_truncated_decay_threshold": null,
+  "timing": "9 rotating-order samples, 30 graph replays with 1 forwards per graph",
+  "partitions": {
+    "8": {
+      "correctness": {
+        "flashqla_full": {
+          "relative_rms": 0.00017868849681690335,
+          "finite": true
+        },
+        "optimized": {
+          "relative_rms": 0.004755307920277119,
+          "finite": true
+        },
+        "flashinfer": {
+          "relative_rms": 0.0027187159284949303,
+          "finite": true
+        }
+      },
+      "flashqla_full": {
+        "median_ms": 7.403886922200521,
+        "samples_ms": [
+          7.284867350260416,
+          7.676397705078125,
+          7.4829259236653645,
+          7.432638041178385,
+          7.403886922200521,
+          7.384785970052083,
+          7.385185241699219,
+          7.396050008138021,
+          7.437551879882813
+        ]
+      },
+      "optimized": {
+        "median_ms": 4.418079121907552,
+        "samples_ms": [
+          4.295962524414063,
+          4.330691019694011,
+          4.292093912760417,
+          4.4940129597981775,
+          4.502876790364583,
+          4.309243774414062,
+          4.4868830362955725,
+          4.526236979166667,
+          4.418079121907552
+        ]
+      },
+      "flashinfer": {
+        "median_ms": 4.5639394124348955,
+        "samples_ms": [
+          4.461677042643229,
+          4.721171061197917,
+          4.445302327473958,
+          4.693396504720052,
+          4.734650675455729,
+          4.524909973144531,
+          4.5639394124348955,
+          4.64508056640625,
+          4.537127685546875
+        ]
+      }
+    }
+  },
+  "physical_gpu_index": 0
+}

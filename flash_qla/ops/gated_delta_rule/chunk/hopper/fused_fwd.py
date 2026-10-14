@@ -658,7 +658,7 @@ def fused_gdr_fwd(
     batch_size, num_tokens, Hg, K = k.shape
     _, _, H, V = v.shape
     chunk_size = a.shape[-1]
-    scale = scale or K ** (-0.5)
+    scale = K ** (-0.5) if scale is None else scale
     assert K == V == 128
     assert chunk_size == 64
     output_final_state = output_final_state or False

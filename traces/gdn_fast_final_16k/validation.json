@@ -1,0 +1,32 @@
+{
+  "tests_passed": 24,
+  "local_racecheck_errors": 0,
+  "forward_racecheck_errors": 0,
+  "forward_racecheck_cases": 6,
+  "flashinfer_commit": "50829ac2644704439260ac646067c0fc8c9bd0f5",
+  "torch_version": "2.13.0+cu130",
+  "tilelang_version": "0.1.13",
+  "compiled_resource_checks": {
+    "scope": "B=1,T=256,Hq=2,Hv=4,D=128; local folded and output final-state variants",
+    "local": {
+      "registers": 60,
+      "stack_bytes": 0,
+      "local_bytes": 0,
+      "LDL": 0,
+      "STL": 0
+    },
+    "output": {
+      "registers": 168,
+      "stack_bytes": 0,
+      "local_bytes": 0,
+      "LDL": 0,
+      "STL": 0
+    }
+  },
+  "source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/local_precompute.py": "b3b454998ae7e9367dae4d4712b1c04886bfdaa2e62f5c98df27b4309a9bd6d6",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/prepare_mn.py": "86dc4436e9732c6a1bc2b08b1fa44190e2d1ad3012f6871a1c90249a84b62834",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/output_fwd.py": "a88b6386150183dde8fc1486578efd03b19b7468899f3ca2d07df652034bc2ca",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/fast_fwd.py": "a5efb9c36619e586fa6f0792e1e4e19e365c9a97eacd83a1c71f20b55d753f35"
+  }
+}

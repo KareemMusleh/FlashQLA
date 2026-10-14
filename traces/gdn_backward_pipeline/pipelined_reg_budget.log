@@ -1,0 +1,53 @@
+BENCH 16384 0.001
+[11:59:18] : Warning: Data race detected: 2 potential race(s)
+  [1] `partial(j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2,)` is written by multiple threads in loop (i, j)
+  --> /home/kareemm/forks/FlashQLA/traces/gdn_backward_pipeline/pipelined_implicit.py:137:1
+  Example:
+  CU[p + 1] = 0
+  CU[p] = (- 64)
+  bx = 0
+  c = (- 1)
+  free0 = 0
+  free0$1 = 0
+  free1 = 0
+  i = 8
+  i_OTHER_ = 0
+  j = 0
+  j_OTHER_ = 1
+  partial[j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2] + dh[i, j] * T.Cast("float32", hs[j, i]) == partial[j_OTHER_ // 64 * 128 + i_OTHER_ % 64 // 16 * 32 + i_OTHER_ % 8 * 4 + j_OTHER_ % 8 // 2] + dh[i_OTHER_, j_OTHER_] * T.Cast("float32", hs[j_OTHER_, i_OTHER_])$2 = false
+  tx = 0
+  [2] `partial(j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2,)` is written by multiple threads in loop (i, j)
+  --> /home/kareemm/forks/FlashQLA/traces/gdn_backward_pipeline/pipelined_implicit.py:159:1
+  Example:
+  CU[p + 1] = 0
+  CU[p] = (- 64)
+  bx = 0
+  c = (- 1)
+  free0 = 0
+  free0$1 = 0
+  free1 = 0
+  i = 8
+  i_OTHER_ = 0
+  j = 0
+  j_OTHER_ = 1
+  partial[j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2] + acc[i, j] * T.Cast("float32", us[i, j]) == partial[j_OTHER_ // 64 * 128 + i_OTHER_ % 64 // 16 * 32 + i_OTHER_ % 8 * 4 + j_OTHER_ % 8 // 2] + acc[i_OTHER_, j_OTHER_] * T.Cast("float32", us[i_OTHER_, j_OTHER_]) = false
+  tx = 0
+If you believe this is a false positive, pass `PassKey.TL_DISABLE_DATA_RACE_CHECK` to pass key to disable this check.
+2026-10-13 11:59:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:131): TileLang begins to compile kernel `kernel` with `out_idx=[10, 11, 12, 13, 14, 15]`
+2026-10-13 11:59:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:139): TileLang completes to compile kernel `kernel`
+Traceback (most recent call last):
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 278, in <module>
+    main()
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 270, in main
+    results[f"{length}_decay{decay}"] = benchmark(
+                                        ^^^^^^^^^^
+  File "/opt/ydt/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 175, in benchmark
+    checks[name] = check(actual, expected, 0.04 if name == "implicit_experimental" else candidate_tolerance)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kareemm/forks/FlashQLA/profile/bench_fair_gdn_backward.py", line 112, in check
+    assert error < tolerance, (name, error)
+           ^^^^^^^^^^^^^^^^^
+AssertionError: ('dk', 0.0543010072848486)

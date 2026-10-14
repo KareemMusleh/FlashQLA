@@ -1,0 +1,170 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "visible_devices": "1",
+  "fp8_projections": [
+    "q",
+    "k",
+    "v",
+    "z",
+    "a",
+    "b",
+    "out"
+  ],
+  "fp8_backend": "deepgemm",
+  "direct_scales": true,
+  "compare_rowwise": false,
+  "compare_scale_layout": true,
+  "shape": {
+    "batch": 1,
+    "hidden": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "head_dim": 128,
+    "partitions": 8
+  },
+  "precision": "YDT blockwise E4M3: activation 1x128, weight 128x128; power-of-two FP32 scales; DeepGEMM fp8_gemm_nt with BF16 output. BF16 dX/dW GEMMs; dX uses runtime-dequantized FP8 W and straight-through dW uses original BF16 X. Activation scales are written directly as TMA-aligned MN-major FP32 unless --legacy-scales is selected.",
+  "timing": "Weight quantization is excluded (explicit preparation between optimizer steps). Activation quantization, weight dequantization, BF16 dX and dW GEMMs included. No cached dequantized weight. CUDA graphs: 50 alternating warmups, nine alternating-order samples. DeepGEMM scale-layout conversion is timed; no scale layout or dequantized weight is cached.",
+  "full_layer": "Identical standard GDN forward/backward, saved intermediates, P8 and decay truncation off; fused training norm/gate in both variants. Includes all parameter/input gradients; excludes loss/optimizer.",
+  "projections": "Each of seven projections measured with BF16 fixed inputs/upstream gradients and both dX/dW; input-gradient summation for shared input is excluded in this isolated scope.",
+  "source_sha256": {
+    "profile/bench_gdn_fp8_training.py": "82ae75dd50beb8fea810e61b850a9c0382fb3990a8e8d6ffaf2d61db84eaa4b7",
+    "flash_qla/ops/fp8_linear.py": "ed9a5ca3a657282794092004d14203f114e27f2e643123257d82c696ffef81ca",
+    "profile/bench_gdn_full_layer_training.py": "b59be05e7140d36a1b0aa5d74c865c3d413f17ee26852d84e39c04ebf5b526d5",
+    "flash_qla/ops/deepgemm_linear.py": "2078123e5f1c1b78e6decb0b1fa07377f675473c67312c5a772b99a72d6b8a98"
+  },
+  "deepgemm_version": "2.1.1",
+  "deepgemm_num_sms": 132,
+  "quantization_source": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/fp8/quantization/blockwise.py",
+  "quantization_sha256": "73c3d6c15743f0d0272fc738b5e1f82b0bbab319ba703b9aabcbe66cacae9697",
+  "16384": {
+    "full_layer": {
+      "output_relative_rms": 0.08629475099850309,
+      "gradient_relative_rms": {
+        "input": 0.08815927354240237,
+        "norm": 0.07986090535720346,
+        "A_log": 0.09685664690996054,
+        "dt_bias": 0.09685260053938342,
+        "q.weight": 0.08425245517955088,
+        "k.weight": 0.09099955302675602,
+        "v.weight": 0.082130297813921,
+        "z.weight": 0.07424692970524349,
+        "a.weight": 0.09529854647477674,
+        "b.weight": 0.09349112098881049,
+        "out.weight": 0.07781087437688575,
+        "conv.0": 0.09291086454887942,
+        "conv.1": 0.09707453978132922,
+        "conv.2": 0.0864329915523375
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 13.40076141357422,
+          "samples_ms": [
+            13.811398315429688,
+            13.508543395996094,
+            13.141996765136719,
+            13.14583740234375,
+            13.947544860839844,
+            13.91658935546875,
+            13.399494934082032,
+            13.40076141357422,
+            13.321043395996094
+          ]
+        },
+        "fp8": {
+          "median_ms": 12.617203521728516,
+          "samples_ms": [
+            12.8994873046875,
+            12.617203521728516,
+            12.39516830444336,
+            12.422841644287109,
+            12.723423767089844,
+            12.803961181640625,
+            12.617593383789062,
+            12.4793212890625,
+            12.447148895263672
+          ]
+        },
+        "legacy_scales": {
+          "median_ms": 12.462413024902343,
+          "samples_ms": [
+            12.820748901367187,
+            12.35274887084961,
+            12.34035873413086,
+            12.462413024902343,
+            12.635884857177734,
+            12.892729187011719,
+            12.79415054321289,
+            12.394815826416016,
+            12.32495346069336
+          ]
+        }
+      }
+    }
+  },
+  "131072": {
+    "full_layer": {
+      "output_relative_rms": 0.08667009595843006,
+      "gradient_relative_rms": {
+        "input": 0.0883418120338449,
+        "norm": 0.07625235625623121,
+        "A_log": 0.0899951762996317,
+        "dt_bias": 0.0899961659485502,
+        "q.weight": 0.08428291456268064,
+        "k.weight": 0.0910207057953619,
+        "v.weight": 0.08209189122242658,
+        "z.weight": 0.07468898671347764,
+        "a.weight": 0.09452881819556101,
+        "b.weight": 0.09301826628037556,
+        "out.weight": 0.07821257183252704,
+        "conv.0": 0.09077713000268642,
+        "conv.1": 0.09683543634081322,
+        "conv.2": 0.08577577166322452
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 108.89873504638672,
+          "samples_ms": [
+            113.1760025024414,
+            110.66783905029297,
+            124.34566497802734,
+            118.32823944091797,
+            106.91646575927734,
+            108.52188873291016,
+            108.18635559082031,
+            108.89873504638672,
+            107.88969421386719
+          ]
+        },
+        "fp8": {
+          "median_ms": 101.6684341430664,
+          "samples_ms": [
+            117.8364028930664,
+            100.9883804321289,
+            103.41547393798828,
+            117.4946060180664,
+            113.50958251953125,
+            101.04730987548828,
+            101.0271224975586,
+            101.52884674072266,
+            101.6684341430664
+          ]
+        },
+        "legacy_scales": {
+          "median_ms": 103.20906829833984,
+          "samples_ms": [
+            118.70091247558594,
+            102.23896026611328,
+            105.8818588256836,
+            113.07270050048828,
+            118.86395263671875,
+            103.20906829833984,
+            102.85403442382812,
+            101.29638671875,
+            101.84333038330078
+          ]
+        }
+      }
+    }
+  }
+}

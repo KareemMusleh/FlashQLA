@@ -1,0 +1,288 @@
+{
+  "flashinfer_commit": "50829ac2644704439260ac646067c0fc8c9bd0f5",
+  "flashinfer_path": "/tmp/flashinfer-gdn-compare/flashinfer/__init__.py",
+  "flashqla_commit": "da06429d54b0f577de0a638f451ac8f0b395e0ac",
+  "torch": "2.13.0+cu130",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "visible_devices": "1",
+  "shape": {
+    "batch": 1,
+    "tokens": 16384,
+    "key_heads": 16,
+    "value_heads": 48,
+    "head_dim": 128
+  },
+  "dtype": "BF16 QKV; FP32 gates",
+  "scope": "forward-only; no initial/final state; scale=128**-0.5",
+  "gate": "FlashQLA logsigmoid(N(0,1))/16; FlashInfer exp(log_gate), conversion outside timing",
+  "method": "CUDA graphs; nine rotating-order samples of 30 replays, warmed before capture",
+  "including_qk_norm": {
+    "flashqla_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.7998303731282552,
+      "samples_ms": [
+        0.7990869522094727,
+        0.810536511739095,
+        0.7946869532267252,
+        0.8046976089477539,
+        0.803550910949707,
+        0.8020544052124023,
+        0.7983210881551107,
+        0.7998303731282552,
+        0.7982271830240886
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "triton_per_fused__to_copy_add_mul_rsqrt_sum_0"
+      ]
+    },
+    "flashinfer_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0027166465297341347,
+        "max_abs": 0.0006103515625,
+        "finite": true
+      },
+      "median_ms": 0.7332117080688476,
+      "samples_ms": [
+        0.7204373041788737,
+        0.7208533604939779,
+        0.7369781494140625,
+        0.7365365346272786,
+        0.7184789021809895,
+        0.7348480224609375,
+        0.7335669199625651,
+        0.7332117080688476,
+        0.7321002960205079
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "kernel_cutlass__kernel_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_128_16_8_4_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleFixupHmmaSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc151201_TVLayoutDst151201_Valuetypef32_tensor0000_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleMNPrecomputeSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRulePrefillSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst14096_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleTPrecomputeSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst1409601_Valuetypebf16_tenso_0"
+      ]
+    },
+    "flashqla_forced_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0005123166483826935,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.6925120035807292,
+      "samples_ms": [
+        0.685312016805013,
+        0.7000458399454753,
+        0.6826645533243815,
+        0.6966378529866536,
+        0.6809514363606771,
+        0.695091183980306,
+        0.6914090474446615,
+        0.692632548014323,
+        0.6925120035807292
+      ],
+      "kernels_per_iteration": 8,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_correct_h0_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_get_warmup_chunks_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "tilelang_prepare_h_kernel_kernel",
+        "triton_per_fused__to_copy_add_mul_rsqrt_sum_0"
+      ]
+    },
+    "flashqla_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.8230197270711263,
+      "samples_ms": [
+        0.815884780883789,
+        0.835316276550293,
+        0.8156725565592448,
+        0.8296970367431641,
+        0.8106549580891927,
+        0.8224831899007161,
+        0.82303466796875,
+        0.8244373321533203,
+        0.8230197270711263
+      ],
+      "kernels_per_iteration": 5,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "triton_per_fused__to_copy_add_mul_rsqrt_sum_0"
+      ]
+    },
+    "flashinfer_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0026556949596852064,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.8071402867635091,
+      "samples_ms": [
+        0.8049173355102539,
+        0.8190912246704102,
+        0.8007071812947592,
+        0.813322639465332,
+        0.8133781433105469,
+        0.7950709025065105,
+        0.8069770812988282,
+        0.8076330820719401,
+        0.8071402867635091
+      ],
+      "kernels_per_iteration": 2,
+      "kernel_names": [
+        "kernel_cutlass__kernel_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_tensorptrbf16gmemalign16oi641281281_128_16_8_4_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_sm90_FullyFusedDeltaRuleSm90_object_at__tensorptrf32gmemalign16o1_tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSr_0"
+      ]
+    }
+  },
+  "prenormalized_qk": {
+    "flashqla_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.7146922429402669,
+      "samples_ms": [
+        0.702069346110026,
+        0.7149471918741862,
+        0.7148256301879883,
+        0.7257045110066732,
+        0.709332275390625,
+        0.7146026611328125,
+        0.7146922429402669,
+        0.7152064005533855,
+        0.6922837575276692
+      ],
+      "kernels_per_iteration": 3,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel"
+      ]
+    },
+    "flashinfer_auto": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0027166465297341347,
+        "max_abs": 0.0006103515625,
+        "finite": true
+      },
+      "median_ms": 0.6468021392822265,
+      "samples_ms": [
+        0.6351402918497722,
+        0.6299605051676432,
+        0.6468714396158854,
+        0.647111447652181,
+        0.629466692606608,
+        0.6477109273274739,
+        0.6468021392822265,
+        0.6471445083618164,
+        0.6277119954427083
+      ],
+      "kernels_per_iteration": 4,
+      "kernel_names": [
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleFixupHmmaSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc151201_TVLayoutDst151201_Valuetypef32_tensor0000_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleMNPrecomputeSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRulePrefillSm90_object_at__tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst14096_0",
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_cp_sm90CPDeltaRuleTPrecomputeSm90_object_at__CopyAtom_ThrID10_TVLayoutSrc1409601_TVLayoutDst1409601_Valuetypebf16_tenso_0"
+      ]
+    },
+    "flashqla_forced_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0005123166483826935,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.5967946370442708,
+      "samples_ms": [
+        0.5967946370442708,
+        0.5927295684814453,
+        0.5940256118774414,
+        0.6064597447713216,
+        0.5925013224283854,
+        0.6077450434366862,
+        0.6068159739176432,
+        0.6060362497965495,
+        0.5924586613972982
+      ],
+      "kernels_per_iteration": 6,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_correct_h0_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_get_warmup_chunks_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel",
+        "tilelang_prepare_h_kernel_kernel"
+      ]
+    },
+    "flashqla_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      "median_ms": 0.7364394505818684,
+      "samples_ms": [
+        0.7399701436360677,
+        0.7228586832682292,
+        0.7283744176228841,
+        0.7402528127034506,
+        0.7214794794718424,
+        0.7273237228393554,
+        0.7403562545776368,
+        0.7381343841552734,
+        0.7364394505818684
+      ],
+      "kernels_per_iteration": 3,
+      "kernel_names": [
+        "tilelang_chunk_local_cumsum_kernel_kernel",
+        "tilelang_fused_chunk_gdr_fwd_kernel_kernel",
+        "tilelang_kkt_solve_kernel_kernel"
+      ]
+    },
+    "flashinfer_no_cp": {
+      "correctness_vs_flashqla_auto": {
+        "relative_rms": 0.0026556949596852064,
+        "max_abs": 0.00048828125,
+        "finite": true
+      },
+      "median_ms": 0.7241962432861329,
+      "samples_ms": [
+        0.7240095774332682,
+        0.7241962432861329,
+        0.7248863855997721,
+        0.7297290802001953,
+        0.7243904113769531,
+        0.706166394551595,
+        0.7241514841715495,
+        0.7250933329264323,
+        0.7048309326171875
+      ],
+      "kernels_per_iteration": 1,
+      "kernel_names": [
+        "kernel_cutlass_kernel_flashinfergdn_kernelsdelta_rule_dsldelta_rule_sm90_FullyFusedDeltaRuleSm90_object_at__tensorptrf32gmemalign16o1_tensorptrf32gmemalign16o1_CopyAtom_ThrID10_TVLayoutSr_0"
+      ]
+    }
+  },
+  "flashqla_source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/__init__.py": "b9e88ddb5e77d512656d963311bd5136e7281116b7d708ca6d5c5f37667a32db",
+    "flash_qla/utils/math.py": "5cc42cfac207eae1f9c65f9e1f2483746ee94326fa31483abc57235e0ed05609"
+  },
+  "flashinfer_source_version": "0.7.2",
+  "backward": "No GDN backward implementation/autograd registration found in this checkout; comparison is forward only."
+}

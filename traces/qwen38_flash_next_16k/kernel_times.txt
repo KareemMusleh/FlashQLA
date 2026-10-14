@@ -1,0 +1,46 @@
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                    ChunkGatedDeltaRuleFunctionBackward        15.15%       3.677ms        26.78%       6.498ms       2.166ms       4.972ms        59.31%       6.337ms       2.112ms             3  
+             tilelang_fused_chunk_gdr_bwd_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us       3.218ms        38.39%       3.218ms       1.073ms             3  
+                                   FlashQLA/GDN/forward         0.00%       0.000us         0.00%       0.000us       0.000us       2.413ms        28.79%       2.413ms     804.374us             3  
+                            ChunkGatedDeltaRuleFunction         9.95%       2.415ms        29.62%       7.186ms       2.395ms       1.771ms        21.13%       2.045ms     681.666us             3  
+                       tilelang_prepare_h_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us       1.197ms        14.28%       1.197ms     199.504us             6  
+                triton_per_fused__to_copy_mul_sub_sum_0         0.75%     182.668us         1.11%     268.788us      44.798us     954.177us        11.38%     954.177us     159.030us             6  
+                triton_per_fused__to_copy_mul_sub_sum_0         0.00%       0.000us         0.00%       0.000us       0.000us     954.177us        11.38%     954.177us     159.030us             6  
+## Call CompiledFxGraph fh6udfa3aoly2asn443pyiqhym3k...         0.00%       0.000us         0.00%       0.000us       0.000us     954.177us        11.38%     954.177us     159.030us             6  
+             tilelang_fused_chunk_gdr_fwd_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     949.473us        11.33%     949.473us     316.491us             3  
+             tilelang_group_reduce_vector_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     539.584us         6.44%     539.584us      89.931us             6  
+                       tilelang_kkt_solve_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     511.841us         6.11%     511.841us     170.614us             3  
+                                            aten::copy_         0.33%      80.435us         0.65%     157.347us      26.224us     405.856us         4.84%     405.856us      67.643us             6  
+void at::native::vectorized_elementwise_kernel<8, at...         0.00%       0.000us         0.00%       0.000us       0.000us     405.856us         4.84%     405.856us      67.643us             6  
+          triton_per_fused__to_copy_add_mul_rsqrt_sum_0         0.82%     199.020us         1.50%     364.589us      60.765us     273.731us         3.27%     273.731us      45.622us             6  
+          triton_per_fused__to_copy_add_mul_rsqrt_sum_0         0.00%       0.000us         0.00%       0.000us       0.000us     273.731us         3.27%     273.731us      45.622us             6  
+## Call CompiledFxGraph fmjy5zcloriniachwermxrzftgu6...         0.00%       0.000us         0.00%       0.000us       0.000us     273.731us         3.27%     273.731us      45.622us             6  
+                      tilelang_prepare_dh_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     124.769us         1.49%     124.769us      41.590us             3  
+                      tilelang_correct_h0_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      99.136us         1.18%      99.136us      16.523us             6  
+          tilelang_get_warmup_chunks_bidi_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      63.904us         0.76%      63.904us      21.301us             3  
+              tilelang_chunk_local_cumsum_kernel_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      39.265us         0.47%      39.265us       6.544us             6  
+                                            aten::fill_         0.37%      90.724us         0.54%     131.783us      43.928us       5.472us         0.07%       5.472us       1.824us             3  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       5.472us         0.07%       5.472us       1.824us             3  
+                               FlashQLA/GDN/iteration_0         0.46%     111.223us        36.92%       8.959ms       8.959ms       0.000us         0.00%     679.042us     679.042us             1  
+                                   FlashQLA/GDN/forward         1.72%     416.848us        31.33%       7.603ms       2.534ms       0.000us         0.00%       2.045ms     681.666us             3  
+                                             aten::view         0.75%     181.773us         0.75%     181.773us       4.328us       0.000us         0.00%       0.000us       0.000us            42  
+                               TorchDynamo Cache Lookup         1.51%     366.289us         1.51%     366.289us      30.524us       0.000us         0.00%       0.000us       0.000us            12  
+                             Torch-Compiled Region: 0/0         2.40%     582.175us        16.62%       4.032ms     671.965us       0.000us         0.00%     273.731us      45.622us             6  
+                                      Pregraph bytecode         0.40%      98.264us         0.40%      98.264us       8.189us       0.000us         0.00%       0.000us       0.000us            12  
+                 AOTDispatcher Runtime Wrapper Prologue         0.32%      78.300us         0.32%      78.300us       6.525us       0.000us         0.00%       0.000us       0.000us            12  
+## Call CompiledFxGraph fmjy5zcloriniachwermxrzftgu6...         2.61%     634.278us        13.85%       3.360ms     559.983us       0.000us         0.00%     273.731us      45.622us             6  
+                                Activity Buffer Request        12.51%       3.037ms        12.51%       3.037ms       1.518ms       0.000us         0.00%       0.000us       0.000us             2  
+                                         cuLaunchKernel         3.17%     768.421us         3.17%     768.421us      15.067us       0.000us         0.00%       0.000us       0.000us            51  
+                                  cudaStreamIsCapturing         0.15%      36.783us         0.15%      36.783us       1.226us       0.000us         0.00%       0.000us       0.000us            30  
+                                       aten::empty_like         0.49%     117.891us         1.15%     278.206us      10.304us       0.000us         0.00%       0.000us       0.000us            27  
+                                    aten::empty_strided         0.81%     195.583us         0.81%     195.583us       5.927us       0.000us         0.00%       0.000us       0.000us            33  
+                                    cudaPeekAtLastError         0.03%       7.075us         0.03%       7.075us       0.181us       0.000us         0.00%       0.000us       0.000us            39  
+                                            aten::empty         1.86%     450.513us         1.86%     450.513us       6.826us       0.000us         0.00%       0.000us       0.000us            66  
+                                               aten::to         0.17%      40.299us         1.15%     277.916us       8.422us       0.000us         0.00%     405.856us      12.299us            33  
+                                  FlashQLA/GDN/backward        30.51%       7.402ms        33.29%       8.077ms       2.692ms       0.000us         0.00%       0.000us       0.000us             3  
+autograd::engine::evaluate_function: ChunkGatedDelta...         0.76%     184.727us        27.54%       6.682ms       2.227ms       0.000us         0.00%       6.337ms       2.112ms             3  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 24.264ms
+Self CUDA time total: 8.382ms

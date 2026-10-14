@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /home/kareemm/forks/FlashQLA
+configfile: pytest.ini
+plugins: anyio-4.12.1, vh3-1.2.0, xdist-3.8.0, typeguard-4.4.4, jaxtyping-0.3.2
+collected 88 items
+
+tests/test_cached_bwd.py .........                                       [ 10%]
+tests/test_fast_gdn.py .....................                             [ 34%]
+tests/test_prepare_mn.py .............................                   [ 67%]
+tests/test_l2norm_bwd.py ......................                          [ 92%]
+tests/test_implicit_bwd.py .......                                       [100%]
+
+=============================== warnings summary ===============================
+../../../../opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: 14 warnings
+  /opt/ydt/lib/python3.12/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 88 passed, 14 warnings in 112.08s (0:01:52) ==================

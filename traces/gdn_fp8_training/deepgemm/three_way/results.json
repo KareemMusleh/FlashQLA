@@ -1,0 +1,168 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.13.0+cu130",
+  "visible_devices": "1",
+  "fp8_projections": [
+    "q",
+    "k",
+    "v",
+    "z",
+    "a",
+    "b",
+    "out"
+  ],
+  "fp8_backend": "deepgemm",
+  "compare_rowwise": true,
+  "shape": {
+    "batch": 1,
+    "hidden": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "head_dim": 128,
+    "partitions": 8
+  },
+  "precision": "YDT blockwise E4M3: activation 1x128, weight 128x128; power-of-two FP32 scales; DeepGEMM fp8_gemm_nt with BF16 output. BF16 dX/dW GEMMs; dX uses runtime-dequantized FP8 W and straight-through dW uses original BF16 X.",
+  "timing": "Weight quantization is excluded (explicit preparation between optimizer steps). Activation quantization, weight dequantization, BF16 dX and dW GEMMs included. No cached dequantized weight. CUDA graphs: 50 alternating warmups, nine alternating-order samples. DeepGEMM scale-layout conversion is timed; no scale layout or dequantized weight is cached.",
+  "full_layer": "Identical standard GDN forward/backward, saved intermediates, P8 and decay truncation off; fused training norm/gate in both variants. Includes all parameter/input gradients; excludes loss/optimizer.",
+  "projections": "Each of seven projections measured with BF16 fixed inputs/upstream gradients and both dX/dW; input-gradient summation for shared input is excluded in this isolated scope.",
+  "source_sha256": {
+    "profile/bench_gdn_fp8_training.py": "cdcb1b86bc9e022ccc129b76f0a2de86be748204faab2c5f27bf53faf8cedd47",
+    "flash_qla/ops/fp8_linear.py": "ed9a5ca3a657282794092004d14203f114e27f2e643123257d82c696ffef81ca",
+    "profile/bench_gdn_full_layer_training.py": "b59be05e7140d36a1b0aa5d74c865c3d413f17ee26852d84e39c04ebf5b526d5",
+    "flash_qla/ops/deepgemm_linear.py": "331558c619b524c959e41d0128530635da5e44a3fa67fe26824fc23a2bc11ece"
+  },
+  "deepgemm_version": "2.1.1",
+  "deepgemm_num_sms": 132,
+  "quantization_source": "/home/kareemm/arcadia/ml/torch/ydt/core/ydt_core/fp8/quantization/blockwise.py",
+  "quantization_sha256": "73c3d6c15743f0d0272fc738b5e1f82b0bbab319ba703b9aabcbe66cacae9697",
+  "16384": {
+    "full_layer": {
+      "output_relative_rms": 0.08629475099850309,
+      "gradient_relative_rms": {
+        "input": 0.08815927354240237,
+        "norm": 0.07986090535720346,
+        "A_log": 0.09685664690996054,
+        "dt_bias": 0.09685260053938342,
+        "q.weight": 0.08425245517955088,
+        "k.weight": 0.09099955302675602,
+        "v.weight": 0.082130297813921,
+        "z.weight": 0.07424692970524349,
+        "a.weight": 0.09529854647477674,
+        "b.weight": 0.09349112098881049,
+        "out.weight": 0.07781087437688575,
+        "conv.0": 0.09291085166989145,
+        "conv.1": 0.09707460374730124,
+        "conv.2": 0.08643305292273351
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 13.341574096679688,
+          "samples_ms": [
+            13.866053771972656,
+            13.189260864257813,
+            13.204127502441406,
+            13.341574096679688,
+            13.784159851074218,
+            13.644172668457031,
+            13.335903930664063,
+            13.474259948730468,
+            13.242994689941407
+          ]
+        },
+        "fp8": {
+          "median_ms": 12.610489654541016,
+          "samples_ms": [
+            13.052467346191406,
+            12.68216323852539,
+            12.368256378173829,
+            12.508480072021484,
+            13.010829162597656,
+            12.97546844482422,
+            12.610489654541016,
+            12.59974365234375,
+            12.412242889404297
+          ]
+        },
+        "rowwise": {
+          "median_ms": 12.587110137939453,
+          "samples_ms": [
+            12.937811279296875,
+            12.791744232177734,
+            12.523993682861327,
+            12.534150695800781,
+            13.01961669921875,
+            12.587110137939453,
+            12.87232666015625,
+            12.421453094482422,
+            12.506329345703126
+          ]
+        }
+      }
+    }
+  },
+  "131072": {
+    "full_layer": {
+      "output_relative_rms": 0.08667009595843006,
+      "gradient_relative_rms": {
+        "input": 0.0883418120338449,
+        "norm": 0.07625235625623121,
+        "A_log": 0.0899951762996317,
+        "dt_bias": 0.0899961659485502,
+        "q.weight": 0.08428291456268064,
+        "k.weight": 0.0910207057953619,
+        "v.weight": 0.08209189122242658,
+        "z.weight": 0.07468898671347764,
+        "a.weight": 0.09452881819556101,
+        "b.weight": 0.09301826628037556,
+        "out.weight": 0.07821257183252704,
+        "conv.0": 0.09077706879806484,
+        "conv.1": 0.0968354467856417,
+        "conv.2": 0.08577522631729353
+      },
+      "forward_backward": {
+        "bf16": {
+          "median_ms": 109.31768035888672,
+          "samples_ms": [
+            109.31768035888672,
+            109.5457763671875,
+            109.33134460449219,
+            107.69884490966797,
+            107.82825469970703,
+            111.29952239990234,
+            109.06396484375,
+            109.12139129638672,
+            109.47401428222656
+          ]
+        },
+        "fp8": {
+          "median_ms": 102.1485595703125,
+          "samples_ms": [
+            100.39534759521484,
+            101.27969360351562,
+            102.51465606689453,
+            102.1485595703125,
+            102.90238189697266,
+            101.08545684814453,
+            102.31705474853516,
+            101.94076538085938,
+            102.15847778320312
+          ]
+        },
+        "rowwise": {
+          "median_ms": 102.6280517578125,
+          "samples_ms": [
+            102.15239715576172,
+            102.99088287353516,
+            102.6280517578125,
+            101.80792236328125,
+            101.08860778808594,
+            103.6572494506836,
+            102.03785705566406,
+            103.3499526977539,
+            104.84326171875
+          ]
+        }
+      }
+    }
+  }
+}

@@ -35,11 +35,17 @@ def tilelang_prepare_dh_ws(
     is_cp,
     state_v_first,
     num_stages=2,
+    a_token_stride=None,
+    do_token_stride=None,
 ):
     batch_size = T.dynamic("batch_size")
     num_tokens = T.dynamic("num_tokens")
     num_chunks = T.dynamic("num_chunks")
     block_S = chunk_size
+    a_token_stride = H * chunk_size if a_token_stride is None else a_token_stride
+    do_token_stride = H * DV if do_token_stride is None else do_token_stride
+    a_strides = (T.Cast("int64", num_tokens) * a_token_stride, T.int64(a_token_stride), chunk_size, 1)
+    do_strides = (T.Cast("int64", num_tokens) * do_token_stride, T.int64(do_token_stride), DV, 1)
 
     if is_varlen:
         q_shape = (1, num_tokens, Hg, DK)
@@ -80,10 +86,10 @@ def tilelang_prepare_dh_ws(
     def tilelang_prepare_dh_kernel(
         q: T.Tensor(q_shape, dtype=qkva_dtype),
         k: T.Tensor(k_shape, dtype=qkva_dtype),
-        a: T.Tensor(a_shape, dtype=qkva_dtype),
+        a: T.StridedTensor(a_shape, a_strides, dtype=qkva_dtype),
         g: T.Tensor(g_shape, dtype=g_dtype),
         b: T.Tensor(b_shape, dtype=b_dtype),
-        do: T.Tensor(do_shape, dtype=o_dtype),
+        do: T.StridedTensor(do_shape, do_strides, dtype=o_dtype),
         dht: T.Tensor(dht_shape, dtype=dht_dtype),
         cu_seqlens: T.Tensor([batch_size + 1], dtype=seqlen_dtype),
         chunk_offsets: T.Tensor([batch_size + 1], dtype=seqlen_dtype),
@@ -607,7 +613,7 @@ def fused_gdr_dh_ws(
     batch_size, num_tokens, Hg, K = k.shape
     _, _, H, V = do.shape
     chunk_size = a.shape[-1]
-    scale = scale or K ** (-0.5)
+    scale = K ** (-0.5) if scale is None else scale
     assert K == V == 128
     assert chunk_size == 64
 
@@ -687,6 +693,8 @@ def fused_gdr_dh_ws(
         is_varlen=is_varlen,
         is_cp=is_cp,
         state_v_first=state_v_first,
+        a_token_stride=a.stride(1),
+        do_token_stride=do.stride(1),
     )
     tilelang_prepare_dh_ws_kernel(
         q, k, a, g, b, do, dht, cu_seqlens, chunk_offsets,

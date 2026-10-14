@@ -1,0 +1,13 @@
+LAYER 16384
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+forward {'separate': 5.0925, 'packed': 4.6683, 'direct': 4.8964}
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:310.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+forward_backward {'separate': 20.8642, 'packed': 19.8921, 'direct': 18.1027}
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:00:02 271532:271532 SyncActivityProfilerHandler.cpp:59] profiler_stop

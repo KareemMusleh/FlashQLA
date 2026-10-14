@@ -1,0 +1,245 @@
+"""Experimental implicit-solve GDN adjoint for aligned Hopper BF16 inputs.
+
+Uses the default unfurled inverse and saved chunk states. Gates are factored
+into vectors; no pairwise gate-ratio matrix or inverse gradient is formed.
+For L = I + diag(beta) strict_lower(K K.T), L U = diag(beta) W:
+Z = L^-T dU, dW = diag(beta) Z, F = -strict_lower(Z U.T).
+Then db = rowsum(Z W) + rowsum(K (F K)), and
+dK_solve = diag(beta) (F K) + F.T (diag(beta) K).
+The beta adjoint never divides by beta, including at beta=0.
+"""
+
+from functools import lru_cache
+
+import torch
+import tilelang
+import tilelang.language as T
+
+
+@tilelang.jit(out_idx=[10, 11, 12, 13, 14, 15], pass_configs={
+    tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True,
+})
+def _implicit_bwd(tokens, hk, hv, parts, scale, v_first, use_dht, cu_dtype):
+    C, D = 64, 128
+
+    @T.prim_func
+    def kernel(
+        Q: T.Tensor((1, tokens, hk, D), "bfloat16"),
+        K: T.Tensor((1, tokens, hk, D), "bfloat16"),
+        V: T.Tensor((1, tokens, hv, D), "bfloat16"),
+        A: T.Tensor((1, tokens, hv, C), "bfloat16"),
+        G: T.Tensor((1, tokens, hv), "float32"),
+        B: T.Tensor((1, tokens, hv), "float32"),
+        DO: T.Tensor((1, tokens, hv, D), "bfloat16"),
+        H: T.Tensor((1, tokens // C, hv, D, D), "bfloat16"),
+        DHT: T.Tensor((parts, hv, D, D), "float32"),
+        CU: T.Tensor((parts + 1,), cu_dtype),
+        DQ: T.Tensor((1, tokens, hv, D), "bfloat16"),
+        DK: T.Tensor((1, tokens, hv, D), "bfloat16"),
+        DV: T.Tensor((1, tokens, hv, D), "bfloat16"),
+        DG: T.Tensor((1, tokens, hv), "float32"),
+        DB: T.Tensor((1, tokens, hv), "float32"),
+        DH0: T.Tensor((parts, hv, D, D), "float32"),
+    ):
+        with T.Kernel(parts * hv, threads=256) as (block,):
+            p, h = block // hv, block % hv
+            qs = T.alloc_shared((C, D), "bfloat16")
+            ks = T.alloc_shared((C, D), "bfloat16")
+            vs = T.alloc_shared((C, D), "bfloat16")
+            ds = T.alloc_shared((C, D), "bfloat16")
+            ws = T.alloc_shared((C, D), "bfloat16")
+            us = T.alloc_shared((C, D), "bfloat16")
+            zs = T.alloc_shared((C, D), "bfloat16")
+            hs = T.alloc_shared((D, D), "bfloat16")
+            dhs = T.alloc_shared((D, D), "bfloat16")
+            a = T.alloc_shared((C, C), "bfloat16")
+            ps = T.alloc_shared((C, C), "bfloat16")
+            dps = T.alloc_shared((C, C), "bfloat16")
+            ex = T.alloc_shared((C,), "float32")
+            invex = T.alloc_shared((C,), "float32")
+            beta = T.alloc_shared((C,), "float32")
+            dh = T.alloc_fragment((D, D), "float32")
+            acc = T.alloc_fragment((C, D), "float32")
+            dk = T.alloc_fragment((C, D), "float32")
+            prod = T.alloc_fragment((C, D), "float32")
+            tile = T.alloc_fragment((C, C), "float32")
+            matprod = T.alloc_fragment((D, D), "float32")
+            dg = T.alloc_fragment((C,), "float32")
+            db = T.alloc_fragment((C,), "float32")
+            partial = T.alloc_fragment((256,), "float32")
+            last = T.alloc_fragment((1,), "float32")
+            T.annotate_layout({
+                partial: tilelang.layout.Fragment((256,),
+                    forward_thread_fn=lambda i: i,
+                    forward_index_fn=lambda i: 0),
+                dh: tilelang.layout.Fragment((D, D),
+                    forward_thread_fn=lambda i, j: j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2,
+                    forward_index_fn=lambda i, j: i // 64 * 32 + j % 64 // 8 * 4 + i % 16 // 8 * 2 + j % 2),
+                acc: tilelang.layout.Fragment((C, D),
+                    forward_thread_fn=lambda i, j: j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2,
+                    forward_index_fn=lambda i, j: j % 64 // 8 * 4 + i % 16 // 8 * 2 + j % 2),
+            })
+
+            if use_dht:
+                for i, j in T.Parallel(D, D):
+                    if v_first:
+                        dh[i, j] = DHT[p, h, i, j]
+                    else:
+                        dh[i, j] = DHT[p, h, j, i]
+            else:
+                T.clear(dh)
+
+            for c in T.serial((CU[p + 1] - CU[p]) // C):
+                start = CU[p + 1] - (c + 1) * C
+                T.copy(Q[0, start:start + C, h // (hv // hk), :], qs)
+                T.copy(K[0, start:start + C, h // (hv // hk), :], ks)
+                T.copy(V[0, start:start + C, h, :], vs)
+                T.copy(DO[0, start:start + C, h, :], ds)
+                T.copy(A[0, start:start + C, h, :], a)
+                T.copy(B[0, start:start + C, h], beta)
+                for i in T.Parallel(C):
+                    ex[i] = T.exp2(G[0, start + i, h] * 1.4426950408889634)
+                    invex[i] = T.exp2(-G[0, start + i, h] * 1.4426950408889634)
+                for i, j in T.Parallel(D, D):
+                    if v_first:
+                        hs[i, j] = H[0, start // C, h, i, j]
+                    else:
+                        hs[i, j] = H[0, start // C, h, j, i]
+                T.copy(dh, dhs)
+                T.clear(dg)
+                T.clear(partial)
+                for i, j in T.Parallel(D, D):
+                    partial[j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2] += dh[i, j] * hs[i, j]
+                T.reduce_sum(partial, last, dim=0)
+                # Scalar chunk-end decay derivative, before updating dh.
+                for i in T.Parallel(C):
+                    if i == C - 1:
+                        dg[i] = ex[C - 1] * last[0]
+
+                # W = Gamma^-1 V - K S. U = A diag(beta) W.
+                T.gemm(ks, hs, acc, transpose_B=True, clear_accum=True)
+                for i, j in T.Parallel(C, D):
+                    ws[i, j] = vs[i, j] * invex[i] - acc[i, j]
+                    zs[i, j] = beta[i] * ws[i, j]
+                    ds[i, j] = ds[i, j] * (scale * ex[i])
+                T.gemm(a, zs, acc, clear_accum=True)
+                T.copy(acc, us)
+
+                # P = causal(Q K.T); dU = gamma K dS_out + P.T D.
+                T.gemm(qs, ks, tile, transpose_B=True, clear_accum=True)
+                for i, j in T.Parallel(C, C):
+                    ps[i, j] = T.if_then_else(i >= j, tile[i, j], 0.0)
+                T.gemm(ks, dhs, acc, transpose_B=True, clear_accum=True)
+                T.clear(partial)
+                for i, j in T.Parallel(C, D):
+                    acc[i, j] *= ex[C - 1]
+                    partial[j // 64 * 128 + i % 64 // 16 * 32 + i % 8 * 4 + j % 8 // 2] += acc[i, j] * us[i, j]
+                T.reduce_sum(partial, last, dim=0)
+                for i in T.Parallel(C):
+                    if i == C - 1:
+                        dg[i] += last[0]
+                T.gemm(ps, ds, acc, transpose_A=True)
+                T.copy(acc, zs)
+                T.gemm(a, zs, acc, transpose_A=True, clear_accum=True)
+                T.copy(acc, zs)
+
+                # Z W part of db. Keep W until this contraction finishes.
+                for i, j in T.Parallel(C, D):
+                    prod[i, j] = acc[i, j] * ws[i, j]
+                T.reduce_sum(prod, db, dim=1)
+                for i, j in T.Parallel(C, D):
+                    ws[i, j] = beta[i] * acc[i, j]
+                    prod[i, j] = -vs[i, j] * invex[i] * ws[i, j]
+                    vs[i, j] = invex[i] * ws[i, j]
+                T.reduce_sum(prod, dg, dim=1, clear=False)
+                T.copy(vs, DV[0, start:start + C, h, :])
+
+                # dQ = D S.T + dP K; gates get row contractions of these
+                # two output terms, with no 64x64 gate-ratio derivative.
+                T.gemm(ds, hs, acc, clear_accum=True)
+                for i, j in T.Parallel(C, D):
+                    prod[i, j] = acc[i, j] * qs[i, j]
+                T.reduce_sum(prod, dg, dim=1, clear=False)
+                T.copy(acc, vs)
+                T.gemm(ds, us, tile, transpose_B=True, clear_accum=True)
+                for i, j in T.Parallel(C, C):
+                    tile[i, j] = T.if_then_else(i >= j, tile[i, j], 0.0)
+                    dps[i, j] = tile[i, j]
+                    tile[i, j] *= ps[i, j]
+                T.reduce_sum(tile, dg, dim=1, clear=False)
+                T.copy(vs, acc)
+                T.gemm(dps, ks, acc)
+                T.copy(acc, DQ[0, start:start + C, h, :])
+
+                # Direct K contributions from output, state update, and W.
+                T.gemm(us, dhs, dk, clear_accum=True)
+                for i, j in T.Parallel(C, D):
+                    dk[i, j] *= ex[C - 1]
+                T.gemm(dps, qs, dk, transpose_A=True)
+                T.gemm(ws, hs, acc, clear_accum=True)
+                for i, j in T.Parallel(C, D):
+                    dk[i, j] -= acc[i, j]
+
+                # F = -strict_lower(Z U.T). Reuse A's dead storage.
+                T.gemm(zs, us, tile, transpose_B=True, clear_accum=True)
+                for i, j in T.Parallel(C, C):
+                    a[i, j] = T.if_then_else(i > j, -tile[i, j], 0.0)
+                T.gemm(a, ks, acc, clear_accum=True)
+                for i, j in T.Parallel(C, D):
+                    prod[i, j] = acc[i, j] * ks[i, j]
+                    dk[i, j] += beta[i] * acc[i, j]
+                    vs[i, j] = beta[i] * ks[i, j]
+                T.reduce_sum(prod, db, dim=1, clear=False)
+                T.gemm(a, vs, dk, transpose_A=True)
+                T.copy(dk, DK[0, start:start + C, h, :])
+                for i in T.Parallel(C):
+                    DG[0, start + i, h] = dg[i]
+                    DB[0, start + i, h] = db[i]
+
+                # dS_in.T = gamma dS_out.T + D.T Q - dW.T K.
+                T.gemm(ws, ks, matprod, transpose_A=True, clear_accum=True)
+                for i, j in T.Parallel(D, D):
+                    dh[i, j] = ex[C - 1] * dh[i, j] - matprod[i, j]
+                T.gemm(ds, qs, dh, transpose_A=True)
+
+            for i, j in T.Parallel(D, D):
+                if v_first:
+                    DH0[p, h, i, j] = dh[i, j]
+                else:
+                    DH0[p, h, j, i] = dh[i, j]
+    return kernel
+
+
+@lru_cache(maxsize=32)
+def _dense_cu(device, tokens):
+    return torch.tensor([0, tokens], dtype=torch.int32, device=device)
+
+
+def implicit_gdr_bwd(q, k, v, a, g, b, do, dht, h, scale=None,
+                     cu_seqlens=None, chunk_size=64, state_v_first=False):
+    """Drop-in main backward kernel; boundaries must be 64-token aligned.
+
+    Returns expanded-head dq/dk and gradients w.r.t. cumulative gates, matching
+    fused_gdr_bwd. State reconstruction, CP correction, grouped-head reduction,
+    normalization, and reverse gate-prefix sums remain in the existing driver.
+    This prototype does not replace the public API's default backward.
+    """
+    assert q.shape == k.shape and q.shape[0] == 1
+    tokens, hk, hv = q.shape[1], q.shape[2], v.shape[2]
+    assert q.shape[-1] == v.shape[-1] == 128 and tokens % 64 == 0
+    assert chunk_size == 64 and hv % hk == 0
+    assert all(t.dtype == torch.bfloat16 for t in (q, k, v, a, do, h))
+    assert g.dtype == b.dtype == torch.float32
+    assert all(t.is_cuda and t.is_contiguous() and t.device == q.device
+               for t in (q, k, v, a, g, b, do, h))
+    assert h.shape == (1, tokens // 64, hv, 128, 128)
+    cu = _dense_cu(q.device, tokens) if cu_seqlens is None else cu_seqlens
+    parts = cu.numel() - 1
+    assert cu.dtype in (torch.int32, torch.int64) and cu.device == q.device
+    use_dht = dht is not None
+    if dht is None:
+        dht = torch.empty((parts, hv, 128, 128), dtype=torch.float32, device=q.device)
+    assert dht.shape == (parts, hv, 128, 128) and dht.dtype == torch.float32
+    return _implicit_bwd(tokens, hk, hv, parts, 128**-0.5 if scale is None else scale,
+                         state_v_first, use_dht, str(cu.dtype).split('.')[-1])(
+        q, k, v, a, g, b, do, h, dht, cu)

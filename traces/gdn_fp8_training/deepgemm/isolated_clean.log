@@ -1,0 +1,18 @@
+SEQLEN 16384
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+q {'bf16': 0.7646656036376953, 'fp8': 0.678438377380371}
+k {'bf16': 0.7403327941894531, 'fp8': 0.6824895858764648}
+v {'bf16': 2.0968576431274415, 'fp8': 1.8542144775390625}
+z {'bf16': 2.441241645812988, 'fp8': 2.1489471435546874}
+a {'bf16': 0.1056704044342041, 'fp8': 0.14268159866333008}
+b {'bf16': 0.1060863971710205, 'fp8': 0.14232959747314453}
+out {'bf16': 2.156070327758789, 'fp8': 1.9513408660888671}
+SEQLEN 131072
+q {'bf16': 6.693600177764893, 'fp8': 6.209248065948486}
+k {'bf16': 6.581151962280273, 'fp8': 6.1623358726501465}
+v {'bf16': 18.22831916809082, 'fp8': 15.699295997619629}
+z {'bf16': 18.045856475830078, 'fp8': 15.78867244720459}
+a {'bf16': 0.721455991268158, 'fp8': 1.0544480085372925}
+b {'bf16': 0.7231199741363525, 'fp8': 1.0579999685287476}
+out {'bf16': 18.577360153198242, 'fp8': 16.733728408813477}

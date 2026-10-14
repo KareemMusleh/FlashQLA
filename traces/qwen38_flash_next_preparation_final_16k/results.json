@@ -1,0 +1,142 @@
+{
+  "config": {
+    "seqlen": 16384,
+    "hidden_size": 2560,
+    "key_heads": 16,
+    "value_heads": 48,
+    "conv_size": 4,
+    "norm_eps": 1e-06,
+    "dt_max": 0.01,
+    "partitions": 8,
+    "conv_backend": "dao",
+    "gdn_backend": "optimized",
+    "projection_mode": "packed",
+    "norm_gate_mode": "fused",
+    "preparation_mode": "separate"
+  },
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "scope": "same weights/inputs; full history; mild synthetic decay; fused output gate in every variant",
+  "stage_validation": {
+    "tokens32_warps4": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fused_gates": [
+      0.0,
+      0.0
+    ]
+  },
+  "stage_timings": {
+    "cuda_conv_and_l2": {
+      "median_ms": 0.3666890780131022,
+      "samples_ms": [
+        0.36647574106852215,
+        0.3666890780131022,
+        0.36666240692138674,
+        0.3668842633565267,
+        0.3664800008138021,
+        0.3666506767272949,
+        0.3669557253519694,
+        0.36691519419352214,
+        0.36669012705485027
+      ]
+    },
+    "tokens32_warps4": {
+      "median_ms": 0.28631998697916666,
+      "samples_ms": [
+        0.28621225357055663,
+        0.28608853022257485,
+        0.2862079938252767,
+        0.2863061269124349,
+        0.28631998697916666,
+        0.28632640838623047,
+        0.2864725430806478,
+        0.28638401031494143,
+        0.28642346064249674
+      ]
+    },
+    "cuda_conv_l2_and_gates": {
+      "median_ms": 0.3895968119303385,
+      "samples_ms": [
+        0.3896522521972656,
+        0.38950932820638023,
+        0.38946879704793297,
+        0.3897002538045247,
+        0.3898954709370931,
+        0.3897237459818522,
+        0.3895498593648275,
+        0.3895968119303385,
+        0.3895498593648275
+      ]
+    },
+    "fused_qkv_and_gates": {
+      "median_ms": 0.3124863942464193,
+      "samples_ms": [
+        0.31246827443440756,
+        0.3124863942464193,
+        0.31245867411295575,
+        0.3124959945678711,
+        0.31258134841918944,
+        0.31241385142008465,
+        0.31252374649047854,
+        0.3124160130818685,
+        0.31265281041463217
+      ]
+    }
+  },
+  "best_launch": "tokens32_warps4",
+  "layer_validation": {
+    "packed_cuda": {
+      "relative_rms_vs_cuda": 0.0,
+      "relative_rms_vs_standard_gdn": 0.005389702972024679,
+      "finite": true
+    },
+    "packed_fused_gates": {
+      "relative_rms_vs_cuda": 0.0,
+      "relative_rms_vs_standard_gdn": 0.005389702972024679,
+      "finite": true
+    }
+  },
+  "layer_timings": {
+    "packed_cuda": {
+      "median_ms": 5.0989912923177085,
+      "samples_ms": [
+        4.1123828125,
+        3.9261344401041667,
+        3.9699129231770836,
+        4.151358642578125,
+        6.83401123046875,
+        7.686431477864583,
+        8.08769287109375,
+        5.0989912923177085,
+        7.467289225260417
+      ]
+    },
+    "packed_fused_gates": {
+      "median_ms": 4.787396240234375,
+      "samples_ms": [
+        3.8036210123697916,
+        3.9949385579427084,
+        3.916802978515625,
+        3.908708089192708,
+        7.72692138671875,
+        7.832353515625,
+        7.890306803385417,
+        4.787396240234375,
+        7.80806884765625
+      ]
+    }
+  },
+  "layer_inner_repeats": 5,
+  "sources": {
+    "/home/kareemm/forks/FlashQLA/profile/bench_gdn_preparation.py": "9882b02e0629a7d44535f309c83f9ab47e8683a843f0e85caa2d1d1733494bf6",
+    "/home/kareemm/forks/FlashQLA/profile/bench_gdn_layer.py": "68247d91cf434d1ffdc8022e41d077e82c95ef4c48e192279689fd71d305b19e",
+    "/home/kareemm/forks/FlashQLA/flash_qla/ops/gated_delta_rule/chunk/hopper/prepare_qkv.py": "0c08beb2c58f8384a78957e2f195d06ecdaf1f424aab396805a7128dc100801e"
+  },
+  "profile_kernel_counts": {
+    "packed_cuda": 19,
+    "packed_fused_gates": 7
+  },
+  "measurement_note": "Do not use as final performance evidence: GPU 0 became shared during timing; some samples nearly doubled, and another allocation remained after benchmark exit."
+}

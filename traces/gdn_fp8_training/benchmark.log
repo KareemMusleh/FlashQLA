@@ -1,0 +1,30 @@
+SEQLEN 16384
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:408.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+q {'bf16': 1.0057279586791992, 'fp8': 1.1250752449035644}
+k {'bf16': 0.7554495811462403, 'fp8': 0.7037375926971435}
+v {'bf16': 2.1207040786743163, 'fp8': 1.893427276611328}
+z {'bf16': 3.966572952270508, 'fp8': 3.795123291015625}
+a {'bf16': 0.10533759593963624, 'fp8': 0.13682559728622437}
+b {'bf16': 0.1047808051109314, 'fp8': 0.1366976022720337}
+out {'bf16': 2.2797760009765624, 'fp8': 1.9810495376586914}
+/opt/ydt/lib/python3.12/site-packages/torch/autograd/graph.py:979: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:310.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+full_layer {'bf16': 13.287635803222656, 'fp8': 12.68853759765625} output_rms 0.08297326500283217 max_gradient_rms 0.11041191766609072
+USDT:2026-10-13 13:15:40 360968:360968 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:15:41 360968:360968 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:15:41 360968:360968 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:15:41 360968:360968 SyncActivityProfilerHandler.cpp:59] profiler_stop
+SEQLEN 131072
+q {'bf16': 6.599520206451416, 'fp8': 6.179279804229736}
+k {'bf16': 6.469888210296631, 'fp8': 5.957215785980225}
+v {'bf16': 17.86639976501465, 'fp8': 15.752304077148438}
+z {'bf16': 18.204063415527344, 'fp8': 16.098960876464844}
+a {'bf16': 0.7242239713668823, 'fp8': 0.951744019985199}
+b {'bf16': 0.723471999168396, 'fp8': 0.949072003364563}
+out {'bf16': 18.545120239257812, 'fp8': 17.161231994628906}
+full_layer {'bf16': 108.64332580566406, 'fp8': 102.81549072265625} output_rms 0.08332084430588532 max_gradient_rms 0.0939414473818116
+USDT:2026-10-13 13:16:09 360968:360968 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:16:09 360968:360968 SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-13 13:16:09 360968:360968 SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-13 13:16:09 360968:360968 SyncActivityProfilerHandler.cpp:59] profiler_stop

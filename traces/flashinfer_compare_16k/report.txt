@@ -1,0 +1,28 @@
+FlashInfer vs FlashQLA GDN forward comparison
+FlashInfer source clone: /tmp/flashinfer-gdn-compare, commit 50829ac2644704439260ac646067c0fc8c9bd0f5
+{'batch': 1, 'tokens': 16384, 'key_heads': 16, 'value_heads': 48, 'head_dim': 128}
+BF16 QKV; FP32 gates
+forward-only; no initial/final state; scale=128**-0.5
+FlashQLA logsigmoid(N(0,1))/16; FlashInfer exp(log_gate), conversion outside timing
+CUDA graphs; nine rotating-order samples of 30 replays, warmed before capture
+
+H100, CUDA_VISIBLE_DEVICES=1. All outputs finite.
+
+including_qk_norm
+  flashqla_auto: 0.799830 ms, 5 kernels; RMS difference vs FlashQLA auto 0
+  flashinfer_auto: 0.733212 ms, 5 kernels; RMS difference vs FlashQLA auto 0.00271665
+  flashqla_forced_cp: 0.692512 ms, 8 kernels; RMS difference vs FlashQLA auto 0.000512317
+  flashqla_no_cp: 0.823020 ms, 5 kernels; RMS difference vs FlashQLA auto 0
+  flashinfer_no_cp: 0.807140 ms, 2 kernels; RMS difference vs FlashQLA auto 0.00265569
+
+prenormalized_qk
+  flashqla_auto: 0.714692 ms, 3 kernels; RMS difference vs FlashQLA auto 0
+  flashinfer_auto: 0.646802 ms, 4 kernels; RMS difference vs FlashQLA auto 0.00271665
+  flashqla_forced_cp: 0.596795 ms, 6 kernels; RMS difference vs FlashQLA auto 0.000512317
+  flashqla_no_cp: 0.736439 ms, 3 kernels; RMS difference vs FlashQLA auto 0
+  flashinfer_no_cp: 0.724196 ms, 1 kernels; RMS difference vs FlashQLA auto 0.00265569
+
+FlashQLA inference auto disables CP for this configuration; FlashInfer auto enables CP.
+Forcing FlashQLA CP uses the existing force_intra_cp=True API; no kernel changes.
+Comparison uses equivalent gate semantics: linear alpha for FlashInfer, log(alpha) for FlashQLA.
+Gate conversion is precomputed outside timing. No backward comparison is possible with the FlashInfer GDN API tested.

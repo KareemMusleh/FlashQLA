@@ -1,0 +1,30 @@
+{
+  "tests_passed": 32,
+  "racecheck_cases": 7,
+  "racecheck_errors": 0,
+  "compiled_shape": [
+    1,
+    16384,
+    16,
+    48,
+    128
+  ],
+  "compiled_resources": {
+    "local": {
+      "resource_usage": "\nResource usage:\n Common:\n  GLOBAL:9 CONSTANT[4]:72\n Function kernel_kernel:\n  REG:60 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:768 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    },
+    "output": {
+      "resource_usage": "\nResource usage:\n Common:\n  GLOBAL:0\n Function kernel_kernel:\n  REG:128 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:1408 TEXTURE:0 SURFACE:0 SAMPLER:0\n",
+      "LDL": 0,
+      "STL": 0
+    }
+  },
+  "source_sha256": {
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/local_precompute.py": "2a30d6636bfa5d726c35d99fa4b0d1a80d0f817e61afa9fb6a17c2d8fa0024fc",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/prepare_mn.py": "848536c891b7fd032d032fd824b46003434d40bef2ea2d2dade151f5673c300b",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/output_fwd.py": "5a9064045efc0e319eaf7482def3e40ca0193fce56a32d8a397000cf4f5b18f4",
+    "flash_qla/ops/gated_delta_rule/chunk/hopper/fast_fwd.py": "c34e78de0d11c80567ccc31b2c379b683a05223745da44b7764a410a614ca8f7"
+  }
+}
